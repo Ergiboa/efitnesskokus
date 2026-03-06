@@ -330,7 +330,10 @@ window.setRole = (role) => {
   selectedRole = role;
   document.getElementById('role-coach').classList.toggle('active',  role==='coach');
   document.getElementById('role-client').classList.toggle('active', role==='client');
+  // Solo pedir email del entrenador si es cliente
   document.getElementById('coach-code-field').style.display = role==='client' ? 'block' : 'none';
+  // El campo de email no es obligatorio para entrenador
+  document.getElementById('reg-coach-email').required = role==='client';
 };
 
 window.toggleCoachSecret = () => {
@@ -345,9 +348,10 @@ window.checkCoachSecret = (val) => {
   if (val === COACH_SECRET) {
     coachUnlocked = true;
     document.getElementById('role-coach').style.display = 'block';
-    hint.textContent = '✓ Código correcto. Selecciona "Entrenador".';
+    hint.textContent = '✓ Código correcto.';
     hint.style.color = 'var(--accent)';
     setRole('coach');
+    document.getElementById('coach-code-field').style.display = 'none';
   } else {
     coachUnlocked = false;
     document.getElementById('role-coach').style.display = 'none';
@@ -396,6 +400,7 @@ window.doRegister = async () => {
   if (!name || !email || !pass) { errEl.textContent='Rellena todos los campos'; errEl.classList.add('show'); return; }
   if (pass.length < 8) { errEl.textContent='La contraseña debe tener mínimo 8 caracteres'; errEl.classList.add('show'); return; }
   if (selectedRole==='client' && !coachEmail) { errEl.textContent='Introduce el email de tu entrenador'; errEl.classList.add('show'); return; }
+  if (selectedRole==='coach' && !coachUnlocked) { errEl.textContent='Código de entrenador incorrecto'; errEl.classList.add('show'); return; }
 
   setLoading('reg', true);
 

@@ -1243,54 +1243,65 @@ document.addEventListener('click', (e) => {
 //  BOOTSTRAP
 // ══════════════════════════════════════════════════════
 async function boot() {
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) { window.location.href = 'login.html'; return; }
-  currentUser = session.user;
+  try{
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return; }
+    currentUser = session.user;
 
-  setLoadText('Cargando perfil...');
-  const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
-  if (!profile) { window.location.href = 'login.html'; return; }
-  currentProfile = profile;
+    setLoadText('Cargando perfil...');
+    const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+    if (!profile) { window.location.href = 'login.html'; return; }
+    currentProfile = profile;
 
-  const isCoach = profile.role === 'coach';
-  document.getElementById('sb-username').textContent = profile.full_name || profile.email;
-  document.getElementById('sb-role').textContent     = isCoach ? '👨‍💼 Entrenador' : '🏋️ Cliente';
-  document.getElementById('sb-avatar').textContent   = (profile.full_name||profile.email||'?')[0].toUpperCase();
+    const isCoach = profile.role === 'coach';
+    document.getElementById('sb-username').textContent = profile.full_name || profile.email;
+    document.getElementById('sb-role').textContent     = isCoach ? '👨‍💼 Entrenador' : '🏋️ Cliente';
+    document.getElementById('sb-avatar').textContent   = (profile.full_name||profile.email||'?')[0].toUpperCase();
 
-  if (isCoach) {
-    document.getElementById('client-selector').style.display = 'block';
-    document.querySelector('.coach-only-nav').style.display  = 'flex';
-    setLoadText('Cargando clientes...');
-    await loadClients();
-  } else {
-    currentClientId = currentUser.id;
-    setLoadText('Cargando datos...');
-    await loadClientData(currentUser.id);
-    document.getElementById('diet-locked-notice').style.display = 'flex';
-    document.getElementById('diet-edit-btns').style.display = 'none';
-    document.getElementById('new-routine-btn').style.display = 'none';
-    document.querySelector('.client-feedback-area').style.display = 'block';
-    loadPublishedFeedback();
-  }
+    if (isCoach) {
+      document.getElementById('client-selector').style.display = 'block';
+      document.querySelector('.coach-only-nav').style.display  = 'flex';
+      setLoadText('Cargando clientes...');
+      await loadClients();
+    } else {
+      currentClientId = currentUser.id;
+      setLoadText('Cargando datos...');
+      await loadClientData(currentUser.id);
+      document.getElementById('diet-locked-notice').style.display = 'flex';
+      document.getElementById('diet-edit-btns').style.display = 'none';
+      document.getElementById('new-routine-btn').style.display = 'none';
+      document.querySelector('.client-feedback-area').style.display = 'block';
+      loadPublishedFeedback();
+    }
 
-  await loadExLibrary();
-  await loadApiSettings();
-  renderApiKeyStatus();
-  await checkPrices();
+    // Non-critical loads — errors here no bloquean el app
+    setLoadText('Finalizando...');
+    await Promise.allSettled([
+      loadExLibrary(),
+      loadApiSettings(),
+    ]);
+    renderApiKeyStatus();
+    await checkPrices();
 
-  document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const tab = item.dataset.tab;
-      if (!tab) return;
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      item.classList.add('active');
-      showTab(tab);
-      if (window.innerWidth <= 768) closeSidebar();
+  }catch(err){
+    console.error('Boot error:', err);
+    // Muestra el error pero deja entrar igualmente
+    toast('⚠ Error al iniciar: '+err.message);
+  }finally{
+    // Siempre quita la pantalla de carga
+    document.getElementById('app-loading').classList.add('hidden');
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const tab = item.dataset.tab;
+        if (!tab) return;
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        item.classList.add('active');
+        showTab(tab);
+        if (window.innerWidth <= 768) closeSidebar();
+      });
     });
-  });
-
-  document.getElementById('app-loading').classList.add('hidden');
-  renderResumen();
+    renderResumen();
+  }
 }
 
 function setLoadText(t) { document.getElementById('load-text').textContent = t; }
@@ -1299,19 +1310,25 @@ function setLoadText(t) { document.getElementById('load-text').textContent = t; 
 //  DATA LOAD
 // ══════════════════════════════════════════════════════
 async function loadClients() {
-  const { data } = await sb.from('profiles').select('id,full_name,email').eq('coach_id', currentUser.id).eq('role','client');
-  allClients = data || [];
-  const sel = document.getElementById('client-select');
-  sel.innerHTML = '<option value="">— Selecciona cliente —</option>';
-  allClients.forEach(c => {
-    const o = document.createElement('option');
-    o.value = c.id; o.textContent = c.full_name || c.email;
-    sel.appendChild(o);
-  });
-  await loadCoachData();
-  if (allClients.length > 0) {
-    sel.value = allClients[0].id;
-    await switchClient(allClients[0].id);
+  try{
+    const { data, error } = await sb.from('profiles').select('id,full_name,email').eq('coach_id', currentUser.id).eq('role','client');
+    if(error) throw error;
+    allClients = data || [];
+    const sel = document.getElementById('client-select');
+    sel.innerHTML = '<option value="">— Selecciona cliente —</option>';
+    allClients.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c.id; o.textContent = c.full_name || c.email;
+      sel.appendChild(o);
+    });
+    await loadCoachData();
+    if (allClients.length > 0) {
+      sel.value = allClients[0].id;
+      await switchClient(allClients[0].id);
+    }
+  }catch(e){
+    console.error('loadClients error:', e.message);
+    toast('Error cargando clientes: '+e.message);
   }
 }
 
@@ -1404,15 +1421,21 @@ async function switchClient(clientId) {
 }
 
 async function loadExLibrary() {
-  const coachId = currentProfile.role === 'coach' ? currentUser.id : currentProfile.coach_id;
-  let query = sb.from('exercises_library').select('*');
-  if (coachId) {
-    query = query.or(`coach_id.is.null,coach_id.eq.${coachId}`);
-  } else {
-    query = query.is('coach_id', null);
+  try{
+    const coachId = currentProfile.role === 'coach' ? currentUser.id : currentProfile.coach_id;
+    let query = sb.from('exercises_library').select('*');
+    if (coachId) {
+      query = query.or(`coach_id.is.null,coach_id.eq.${coachId}`);
+    } else {
+      query = query.is('coach_id', null);
+    }
+    const { data, error } = await query.order('name');
+    if(error) throw error;
+    EX_LIBRARY = data || [];
+  }catch(e){
+    console.warn('exercises_library no disponible:', e.message);
+    EX_LIBRARY = [];
   }
-  const { data } = await query.order('name');
-  EX_LIBRARY = data || [];
 }
 
 async function loadPublishedFeedback() {

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>NutriCoach</title>
+<title>Efitnesskokus</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 /* ══════════════════════════════════════════════════════
@@ -81,7 +81,15 @@ body{
 .nav-item.coach-only-nav{color:rgba(242,210,79,.6)}
 .nav-item.coach-only-nav.active{color:var(--accent3);background:rgba(242,210,79,.06);border-color:rgba(242,210,79,.15)}
 .nav-item.coach-only-nav:hover{color:var(--accent3);background:rgba(242,210,79,.04)}
-.nav-sep{height:1px;background:var(--border);margin:5px 8px}
+.nav-sep{height:1px;background:var(--border);margin:6px 8px}
+.nav-group-lbl{font-family:'Syne',sans-serif;font-weight:700;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted2);padding:0 12px 4px;margin-top:2px}
+.nav-submenu{display:none;padding-left:0;margin:0}
+.nav-submenu.open{display:block}
+.nav-sub-item{display:flex;align-items:center;gap:9px;padding:5px 12px 5px 30px;border-radius:7px;margin:1px 6px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:600;font-size:12px;color:var(--muted2);transition:all .15s;border:1px solid transparent}
+.nav-sub-item:hover{color:var(--text);background:var(--card)}
+.nav-sub-item.active{color:var(--accent);background:rgba(194,242,79,.07);border-color:rgba(194,242,79,.12)}
+.nav-chevron{margin-left:auto;font-size:10px;transition:transform .2s;color:var(--muted)}
+.nav-item.has-sub{position:relative}
 
 .sb-bottom{
   padding:10px 12px;border-top:1px solid var(--border);
@@ -615,11 +623,6 @@ textarea{width:100%;background:transparent;border:none;color:var(--text);font-fa
 #toast{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom,0px));right:18px;background:var(--accent);color:#08090a;padding:8px 15px;border-radius:7px;font-family:'Syne',sans-serif;font-weight:700;font-size:11px;opacity:0;transform:translateY(8px);transition:all .22s;pointer-events:none;z-index:999;max-width:calc(100vw - 36px)}
 #toast.show{opacity:1;transform:translateY(0)}
 
-.super-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:var(--card);font-family:'Syne',sans-serif;font-weight:700;font-size:10px;cursor:pointer;transition:all .15s;user-select:none}
-.super-chip:hover{border-color:var(--muted)}
-.super-chip.active{border-color:var(--accent2);color:var(--accent2);background:rgba(79,242,194,.07)}
-.add-super-btn{background:none;border:1px dashed var(--border);color:var(--muted);padding:4px 10px;border-radius:5px;font-family:'Syne',sans-serif;font-weight:700;font-size:10px;cursor:pointer;transition:all .15s}
-.add-super-btn:hover{border-color:var(--accent);color:var(--accent)}
 /* ── PRINT ── */
 @media print{
   #sidebar,#mobile-header,#sidebar-overlay,#gif-modal,#toast,.toolbar,.btn,.super-tabs,.no-print{display:none!important}
@@ -635,7 +638,7 @@ textarea{width:100%;background:transparent;border:none;color:var(--text);font-fa
 <!-- App Loading -->
 <div id="app-loading">
   <div class="load-mark">NC</div>
-  <span id="load-text">Iniciando NutriCoach...</span>
+  <span id="load-text">Iniciando Efitnesskokus...</span>
 </div>
 
 <!-- Autocomplete dropdown (shared) -->
@@ -662,8 +665,8 @@ textarea{width:100%;background:transparent;border:none;color:var(--text);font-fa
 <!-- SIDEBAR -->
 <div id="sidebar">
   <div class="sb-logo">
-    <div class="sb-mark">NC</div>
-    <div class="sb-brand"><h1>NutriCoach</h1><small id="sidebar-client-name">—</small></div>
+    <div class="sb-mark" style="font-size:11px;letter-spacing:-1px">EK</div>
+    <div class="sb-brand"><h1>Efitnesskokus</h1><small id="sidebar-client-name">—</small></div>
   </div>
 
   <!-- Client selector (coach only) -->
@@ -681,18 +684,37 @@ textarea{width:100%;background:transparent;border:none;color:var(--text);font-fa
   </div>
 
   <nav class="sb-nav">
-    <div class="nav-item active" data-tab="resumen"><span class="nav-icon">📊</span>Resumen</div>
-    <div class="nav-item" data-tab="dieta"><span class="nav-icon">✏️</span>Dieta</div>
-    <div class="nav-item" data-tab="recetas"><span class="nav-icon">📖</span>Recetas</div>
-    <div class="nav-item" data-tab="db"><span class="nav-icon">🗄</span>Nutrición DB</div>
-    <div class="nav-item" data-tab="compra"><span class="nav-icon">🛒</span>Compra</div>
-    <div class="nav-item" data-tab="stock"><span class="nav-icon">📦</span>Stock</div>
-    <div class="nav-item" data-tab="entreno"><span class="nav-icon">💪</span>Entreno</div>
-    <div class="nav-item" data-tab="progreso"><span class="nav-icon">📈</span>Progreso</div>
-    <div class="nav-sep"></div>
-    <div class="nav-item coach-only-nav" data-tab="ejercicios"><span class="nav-icon">🎬</span>Librería GIFs</div>
-    <div class="nav-item" data-tab="notas"><span class="nav-icon">📝</span>Notas</div>
-    <div class="nav-item" data-tab="perfil"><span class="nav-icon">👤</span>Mi perfil</div>
+    <!-- Resumen + Notas submenu -->
+    <div class="nav-item active has-sub" data-tab="resumen" onclick="navItemClick(this,event)">
+      <span class="nav-icon">📊</span>Resumen<span class="nav-chevron" id="chev-resumen">▸</span>
+    </div>
+    <div class="nav-submenu" id="sub-resumen">
+      <div class="nav-sub-item" data-tab="notas" onclick="navSubClick(this)"><span class="nav-icon" style="font-size:12px">📝</span>Notas</div>
+    </div>
+
+    <!-- Dieta + Recetas + Nutrición DB submenu -->
+    <div class="nav-item has-sub" data-tab="dieta" onclick="navItemClick(this,event)">
+      <span class="nav-icon">✏️</span>Dieta<span class="nav-chevron" id="chev-dieta">▸</span>
+    </div>
+    <div class="nav-submenu" id="sub-dieta">
+      <div class="nav-sub-item" data-tab="recetas" onclick="navSubClick(this)"><span class="nav-icon" style="font-size:12px">📖</span>Recetas</div>
+      <div class="nav-sub-item" data-tab="db" onclick="navSubClick(this)"><span class="nav-icon" style="font-size:12px">🗄</span>Nutrición DB</div>
+    </div>
+
+    <div class="nav-item" data-tab="entreno" onclick="navItemClick(this,event)"><span class="nav-icon">💪</span>Entreno</div>
+
+    <!-- Logística group -->
+    <div class="nav-sep" style="margin:8px 8px 5px"></div>
+    <div class="nav-group-lbl">Logística</div>
+    <div class="nav-item" data-tab="compra" onclick="navItemClick(this,event)"><span class="nav-icon">🛒</span>Compra</div>
+    <div class="nav-item" data-tab="stock" onclick="navItemClick(this,event)"><span class="nav-icon">📦</span>Stock</div>
+
+    <!-- Perfil (includes Progreso) -->
+    <div class="nav-sep" style="margin:8px 8px 5px"></div>
+    <div class="nav-item" data-tab="perfil" onclick="navItemClick(this,event)"><span class="nav-icon">👤</span>Mi perfil</div>
+
+    <!-- Coach-only: GIF Library (hidden from clients) -->
+    <div class="nav-item coach-only-nav" id="nav-giflib" data-tab="ejercicios" style="display:none" onclick="navItemClick(this,event)"><span class="nav-icon">🎬</span>Librería GIFs</div>
   </nav>
 
   <div class="sb-bottom">
@@ -720,7 +742,7 @@ textarea{width:100%;background:transparent;border:none;color:var(--text);font-fa
   <!-- Mobile header -->
   <div id="mobile-header">
     <button class="hamburger" onclick="toggleSidebar()">☰</button>
-    <span class="mob-title">NutriCoach</span>
+    <span class="mob-title">Efitnesskokus</span>
     <span class="mob-client" id="mob-client-label">—</span>
   </div>
 
@@ -832,24 +854,41 @@ textarea{width:100%;background:transparent;border:none;color:var(--text);font-fa
 
   <!-- COMPRA -->
   <div id="panel-compra" class="panel">
-    <!-- Controls -->
-    <div class="ai-status-bar no-print" style="margin-bottom:8px">
-      <span class="ai-status-text" id="price-status">✓ Precios listos</span>
+    <!-- AI Status + controls -->
+    <div class="ai-status-bar no-print">
+      <div class="ai-status-dot" id="ai-price-dot"></div>
+      <span class="ai-status-text" id="price-status">Cargando precios...</span>
       <span id="btn-ai-prices-wrap"><button class="btn gold xs" onclick="aiRefreshPrices(true)" id="btn-ai-prices" title="Actualizar precios con IA (1 vez al día)">✨ IA Precios</button></span>
       <button class="btn ghost xs no-print" onclick="window.print()" title="Imprimir">🖨</button>
       <button class="btn ghost xs no-print" onclick="resetChecked()" title="Desmarcar todo">↺ Reset</button>
     </div>
-    <!-- Dynamic supermarket chips -->
-    <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap">
-      <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.8px;white-space:nowrap">Supermercados:</span>
-      <div id="super-chips-wrap" style="display:flex;gap:5px;flex-wrap:wrap;align-items:center"></div>
+    <!-- Totals per supermarket -->
+    <div class="price-total-bar" id="price-total-bar">
+      <div class="price-box"><div class="pb-label">💰 Mejor total</div><div class="pb-val" id="total-global">—</div></div>
+      <div class="price-box"><div class="pb-label">🟢 Mercadona</div><div class="pb-val" id="total-merc" style="color:var(--accent)">—</div></div>
+      <div class="price-box"><div class="pb-label">🔵 Lidl</div><div class="pb-val" id="total-lidl" style="color:var(--accent2)">—</div></div>
+      <div class="price-box"><div class="pb-label">🔷 Carrefour</div><div class="pb-val" id="total-carrefour" style="color:var(--blue)">—</div></div>
+      <div class="price-box"><div class="pb-label">🟠 Dia</div><div class="pb-val" id="total-dia" style="color:var(--orange)">—</div></div>
+      <div class="price-box"><div class="pb-label">🟣 Eroski</div><div class="pb-val" id="total-eroski" style="color:var(--purple)">—</div></div>
     </div>
-    <!-- Dynamic totals bar -->
-    <div class="price-total-bar" id="price-total-bar"></div>
+    <!-- Filter -->
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:9px;flex-wrap:wrap" class="no-print">
+      <div class="compra-filter">
+        <span style="font-size:11px">🔍</span>
+        <select id="super-dropdown" onchange="onSuperDropdown(this.value)"
+          style="flex:1;background:transparent;border:none;color:var(--text);font-family:'Syne',sans-serif;font-weight:700;font-size:11px;outline:none;cursor:pointer">
+          <option value="all">Todos los supermercados</option>
+          <option value="merc">🟢 Solo Mercadona</option>
+          <option value="lidl">🔵 Solo Lidl</option>
+          <option value="carrefour">🔷 Solo Carrefour</option>
+          <option value="dia">🟠 Solo Dia</option>
+          <option value="eroski">🟣 Solo Eroski</option>
+          <option value="pendientes">⚠ Sin precio</option>
+        </select>
+      </div>
       <label style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted2);cursor:pointer">
         <input type="checkbox" id="chk-solo-falta" onchange="renderCompra()" style="accent-color:var(--accent)">
-        Solo lo que falta en stock
+        Solo lo que falta
       </label>
     </div>
     <div class="table-scroll">
@@ -915,113 +954,8 @@ textarea{width:100%;background:transparent;border:none;color:var(--text);font-fa
     </div>
   </div>
 
-  <!-- PROGRESO / MEDIDAS -->
-  <div id="panel-progreso" class="panel">
-    <div class="prog-layout">
-
-      <!-- LEFT: entry form -->
-      <div class="prog-form-card">
-        <div class="prog-form-head">
-          <span>➕ Nuevo registro</span>
-        </div>
-        <div class="prog-form-body">
-
-          <div class="prog-field">
-            <label>Fecha</label>
-            <input class="prog-input" type="date" id="prg-date">
-          </div>
-
-          <div class="prog-section-lbl">⚖️ Peso corporal</div>
-
-          <div class="meds-grid">
-            <div class="med-field">
-              <label>Peso (kg)</label>
-              <input class="med-inp" type="number" id="prg-weight" placeholder="75.5" min="30" max="300" step="0.1">
-            </div>
-            <div class="med-field">
-              <label>% Grasa (opcional)</label>
-              <input class="med-inp" type="number" id="prg-fat" placeholder="18.0" min="3" max="60" step="0.1">
-            </div>
-          </div>
-
-          <div class="prog-section-lbl">📏 Medidas (cm)</div>
-
-          <div class="meds-grid">
-            <div class="med-field"><label>Pecho / Tórax</label><input class="med-inp" type="number" id="prg-chest" placeholder="—" step="0.5"></div>
-            <div class="med-field"><label>Cintura</label><input class="med-inp" type="number" id="prg-waist" placeholder="—" step="0.5"></div>
-            <div class="med-field"><label>Cadera</label><input class="med-inp" type="number" id="prg-hips" placeholder="—" step="0.5"></div>
-            <div class="med-field"><label>Brazo (der.)</label><input class="med-inp" type="number" id="prg-arm" placeholder="—" step="0.5"></div>
-            <div class="med-field"><label>Muslo (der.)</label><input class="med-inp" type="number" id="prg-thigh" placeholder="—" step="0.5"></div>
-            <div class="med-field"><label>Pantorrilla</label><input class="med-inp" type="number" id="prg-calf" placeholder="—" step="0.5"></div>
-            <div class="med-field"><label>Cuello</label><input class="med-inp" type="number" id="prg-neck" placeholder="—" step="0.5"></div>
-            <div class="med-field"><label>Hombros</label><input class="med-inp" type="number" id="prg-shoulder" placeholder="—" step="0.5"></div>
-          </div>
-
-          <div class="prog-field">
-            <label>Notas (opcional)</label>
-            <textarea class="prog-input" id="prg-notes" placeholder="Ej: Empecé nueva dieta, después de vacaciones..." style="min-height:60px;resize:vertical;line-height:1.6"></textarea>
-          </div>
-
-          <button class="btn" style="width:100%;justify-content:center" onclick="saveProgressEntry()">💾 Guardar registro</button>
-        </div>
-      </div>
-
-      <!-- RIGHT: charts + history -->
-      <div>
-
-        <!-- Stats row -->
-        <div class="prog-stats-row" id="prg-stats-row">
-          <div class="prog-stat"><div class="ps-lbl">Peso actual</div><div class="ps-val" id="ps-weight">—</div><div class="ps-sub" id="ps-weight-sub">—</div></div>
-          <div class="prog-stat"><div class="ps-lbl">% Grasa</div><div class="ps-val" id="ps-fat">—</div><div class="ps-sub" id="ps-fat-sub">—</div></div>
-          <div class="prog-stat"><div class="ps-lbl">Cintura</div><div class="ps-val" id="ps-waist">—</div><div class="ps-sub" id="ps-waist-sub">—</div></div>
-          <div class="prog-stat"><div class="ps-lbl">Registros</div><div class="ps-val" id="ps-count">0</div><div class="ps-sub" id="ps-count-sub">—</div></div>
-        </div>
-
-        <!-- Analysis -->
-        <div class="analysis-card" id="prg-analysis" style="display:none">
-          <h4>🔬 Análisis de composición corporal</h4>
-          <div class="analysis-status" id="prg-analysis-status"></div>
-          <div class="analysis-bars" id="prg-analysis-bars"></div>
-        </div>
-
-        <!-- Chart -->
-        <div class="chart-wrap">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:7px">
-            <div class="chart-tabs" id="chart-tabs">
-              <button class="chart-tab active" onclick="switchChartTab('weight',this)">Peso</button>
-              <button class="chart-tab" onclick="switchChartTab('fat',this)">% Grasa</button>
-              <button class="chart-tab" onclick="switchChartTab('waist',this)">Cintura</button>
-              <button class="chart-tab" onclick="switchChartTab('measures',this)">Medidas</button>
-            </div>
-          </div>
-          <div id="prg-chart-area" style="min-height:160px;display:flex;align-items:center;justify-content:center;color:var(--muted2);font-family:'Syne',sans-serif;font-size:12px">
-            Añade registros para ver la gráfica
-          </div>
-        </div>
-
-        <!-- History table -->
-        <div class="sec">Historial de registros</div>
-        <div class="table-scroll">
-          <table class="hist-table">
-            <thead><tr>
-              <th>Fecha</th>
-              <th>Peso</th>
-              <th>Δ Peso</th>
-              <th>% Grasa</th>
-              <th>Cintura</th>
-              <th>Pecho</th>
-              <th>Brazo</th>
-              <th>Muslo</th>
-              <th>Notas</th>
-              <th></th>
-            </tr></thead>
-            <tbody id="prg-history-body"></tbody>
-          </table>
-        </div>
-
-      </div>
-    </div>
-  </div>
+  <!-- PROGRESO moved to panel-perfil -->
+  <div id="panel-progreso" class="panel" style="display:none!important"></div>
 
   <!-- EJERCICIOS / GIF LIBRARY (coach only) -->
   <div id="panel-ejercicios" class="panel">
@@ -1141,61 +1075,132 @@ textarea{width:100%;background:transparent;border:none;color:var(--text);font-fa
       </div>
     </div>
   </div>
-  <!-- PERFIL -->
+
+  <!-- ══ MI PERFIL (includes Progreso) ══ -->
   <div id="panel-perfil" class="panel">
-    <div class="sec">👤 MI PERFIL</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:720px">
+    <div style="display:grid;grid-template-columns:340px 1fr;gap:14px;align-items:start;max-width:1100px">
 
-      <!-- Left: avatar, name, password, delete -->
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:18px;display:flex;flex-direction:column;gap:12px">
+      <!-- LEFT: avatar + account settings -->
+      <div style="display:flex;flex-direction:column;gap:11px">
 
-        <!-- Avatar + name -->
-        <div style="display:flex;align-items:center;gap:12px">
-          <div id="profile-avatar-wrap" onclick="document.getElementById('avatar-file').click()"
-            style="width:64px;height:64px;border-radius:12px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:26px;color:#08090a;flex-shrink:0;cursor:pointer;overflow:hidden;position:relative">
-            <span id="profile-avatar-initials">?</span>
-            <img id="profile-avatar-img" src="" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
-            <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);font-size:9px;text-align:center;padding:2px;color:#fff">📷</div>
+        <!-- Avatar card -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:18px">
+          <div class="sec" style="margin-bottom:12px">👤 MI CUENTA</div>
+          <div style="display:flex;align-items:center;gap:13px;margin-bottom:14px">
+            <div id="profile-avatar-wrap" onclick="document.getElementById('avatar-file').click()"
+              style="width:64px;height:64px;border-radius:12px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:26px;color:#08090a;flex-shrink:0;cursor:pointer;overflow:hidden;position:relative">
+              <span id="profile-avatar-initials">?</span>
+              <img id="profile-avatar-img" src="" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+              <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);font-size:8px;text-align:center;padding:2px;color:#fff;font-family:'Syne',sans-serif;font-weight:700">FOTO</div>
+            </div>
+            <input type="file" id="avatar-file" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:9px;color:var(--muted2);font-family:'Syne',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Nombre</div>
+              <input id="profile-name-inp" type="text" placeholder="Tu nombre..."
+                style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;box-sizing:border-box">
+            </div>
           </div>
-          <input type="file" id="avatar-file" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
-          <div style="flex:1;min-width:0">
-            <div style="font-family:'Syne',sans-serif;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);margin-bottom:5px">Nombre</div>
-            <input id="profile-name-inp" type="text" placeholder="Tu nombre..."
-              style="width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none">
-          </div>
+          <button class="btn" onclick="saveProfileName()" style="width:100%;justify-content:center;margin-bottom:12px">💾 Guardar nombre</button>
+
+          <div style="height:1px;background:var(--border);margin-bottom:12px"></div>
+
+          <div style="font-size:9px;color:var(--muted2);font-family:'Syne',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Cambiar contraseña</div>
+          <input id="profile-newpass" type="password" placeholder="Nueva contraseña (mín. 8 caracteres)"
+            style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;box-sizing:border-box;margin-bottom:8px">
+          <button class="btn ghost" onclick="changePassword()" style="width:100%;justify-content:center">🔑 Cambiar contraseña</button>
+
+          <div style="height:1px;background:var(--border);margin:12px 0"></div>
+          <button class="btn danger" onclick="deleteAccount()" style="width:100%;justify-content:center">🗑 Eliminar mi cuenta</button>
         </div>
-        <button class="btn" onclick="saveProfileName()">💾 Guardar nombre</button>
 
-        <div style="height:1px;background:var(--border)"></div>
+        <!-- Weight quick log card -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:18px">
+          <div class="sec" style="margin-bottom:10px">⚖️ PESO RÁPIDO</div>
+          <div style="display:flex;gap:7px;align-items:center;margin-bottom:10px">
+            <input id="weight-inp" type="number" min="30" max="300" step="0.1" placeholder="kg"
+              style="width:75px;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:15px;outline:none;text-align:center"
+              onkeydown="if(event.key==='Enter')logWeight()">
+            <span style="color:var(--muted2);font-size:12px">kg</span>
+            <button class="btn sm" onclick="logWeight()" style="flex:1">+ Registrar</button>
+          </div>
+          <div id="weight-chart" style="display:flex;align-items:flex-end;gap:2px;height:70px;background:var(--bg2);border-radius:6px;padding:6px;overflow-x:auto;margin-bottom:8px"></div>
+          <div id="weight-list" style="max-height:140px;overflow-y:auto;display:flex;flex-direction:column;gap:3px"></div>
+        </div>
 
-        <div style="font-family:'Syne',sans-serif;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted2)">Cambiar contraseña</div>
-        <input id="profile-newpass" type="password" placeholder="Nueva contraseña (mín. 8 caracteres)"
-          style="width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none">
-        <button class="btn ghost" onclick="changePassword()">🔑 Cambiar contraseña</button>
-
-        <div style="height:1px;background:var(--border)"></div>
-
-        <button class="btn danger" onclick="deleteAccount()" style="width:100%;justify-content:center">🗑 Eliminar mi cuenta</button>
       </div>
 
-      <!-- Right: weight tracking -->
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:18px;display:flex;flex-direction:column;gap:10px">
-        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:12px;color:var(--accent3)">⚖️ SEGUIMIENTO DE PESO</div>
-        <div style="display:flex;gap:7px;align-items:center">
-          <input id="weight-inp" type="number" min="30" max="300" step="0.1" placeholder="kg"
-            style="width:75px;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:15px;outline:none;text-align:center"
-            onkeydown="if(event.key==='Enter')logWeight()">
-          <span style="color:var(--muted2);font-size:12px">kg</span>
-          <button class="btn sm" onclick="logWeight()" style="flex:1">+ Registrar</button>
+      <!-- RIGHT: Progreso completo -->
+      <div>
+        <div class="sec" style="margin-bottom:12px">📈 PROGRESO Y MEDIDAS</div>
+        <div class="prog-layout">
+          <div class="prog-form-card">
+            <div class="prog-form-head"><span>➕ Nuevo registro</span></div>
+            <div class="prog-form-body">
+              <div class="prog-field">
+                <label>Fecha</label>
+                <input class="prog-input" type="date" id="prg-date">
+              </div>
+              <div class="prog-section-lbl">⚖️ Peso corporal</div>
+              <div class="meds-grid">
+                <div class="med-field"><label>Peso (kg)</label><input class="med-inp" type="number" id="prg-weight" placeholder="75.5" min="30" max="300" step="0.1"></div>
+                <div class="med-field"><label>% Grasa</label><input class="med-inp" type="number" id="prg-fat" placeholder="18.0" min="3" max="60" step="0.1"></div>
+              </div>
+              <div class="prog-section-lbl">📏 Medidas (cm)</div>
+              <div class="meds-grid">
+                <div class="med-field"><label>Pecho</label><input class="med-inp" type="number" id="prg-chest" placeholder="—" step="0.5"></div>
+                <div class="med-field"><label>Cintura</label><input class="med-inp" type="number" id="prg-waist" placeholder="—" step="0.5"></div>
+                <div class="med-field"><label>Cadera</label><input class="med-inp" type="number" id="prg-hips" placeholder="—" step="0.5"></div>
+                <div class="med-field"><label>Brazo (der.)</label><input class="med-inp" type="number" id="prg-arm" placeholder="—" step="0.5"></div>
+                <div class="med-field"><label>Muslo (der.)</label><input class="med-inp" type="number" id="prg-thigh" placeholder="—" step="0.5"></div>
+                <div class="med-field"><label>Pantorrilla</label><input class="med-inp" type="number" id="prg-calf" placeholder="—" step="0.5"></div>
+                <div class="med-field"><label>Cuello</label><input class="med-inp" type="number" id="prg-neck" placeholder="—" step="0.5"></div>
+                <div class="med-field"><label>Hombros</label><input class="med-inp" type="number" id="prg-shoulder" placeholder="—" step="0.5"></div>
+              </div>
+              <div class="prog-field">
+                <label>Notas</label>
+                <textarea class="prog-input" id="prg-notes" placeholder="Ej: Empecé nueva dieta..." style="min-height:55px;resize:vertical;line-height:1.6"></textarea>
+              </div>
+              <button class="btn" style="width:100%;justify-content:center" onclick="saveProgressEntry()">💾 Guardar registro</button>
+            </div>
+          </div>
+          <div>
+            <div class="prog-stats-row" id="prg-stats-row">
+              <div class="prog-stat"><div class="ps-lbl">Peso actual</div><div class="ps-val" id="ps-weight">—</div><div class="ps-sub" id="ps-weight-sub">—</div></div>
+              <div class="prog-stat"><div class="ps-lbl">% Grasa</div><div class="ps-val" id="ps-fat">—</div><div class="ps-sub" id="ps-fat-sub">—</div></div>
+              <div class="prog-stat"><div class="ps-lbl">Cintura</div><div class="ps-val" id="ps-waist">—</div><div class="ps-sub" id="ps-waist-sub">—</div></div>
+              <div class="prog-stat"><div class="ps-lbl">Registros</div><div class="ps-val" id="ps-count">0</div><div class="ps-sub" id="ps-count-sub">—</div></div>
+            </div>
+            <div class="analysis-card" id="prg-analysis" style="display:none">
+              <h4>🔬 Análisis de composición corporal</h4>
+              <div class="analysis-status" id="prg-analysis-status"></div>
+              <div class="analysis-bars" id="prg-analysis-bars"></div>
+            </div>
+            <div class="chart-wrap">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:7px">
+                <div class="chart-tabs" id="chart-tabs">
+                  <button class="chart-tab active" onclick="switchChartTab('weight',this)">Peso</button>
+                  <button class="chart-tab" onclick="switchChartTab('fat',this)">% Grasa</button>
+                  <button class="chart-tab" onclick="switchChartTab('waist',this)">Cintura</button>
+                  <button class="chart-tab" onclick="switchChartTab('measures',this)">Medidas</button>
+                </div>
+              </div>
+              <div id="prg-chart-area" style="min-height:160px;display:flex;align-items:center;justify-content:center;color:var(--muted2);font-family:'Syne',sans-serif;font-size:12px">
+                Añade registros para ver la gráfica
+              </div>
+            </div>
+            <div class="sec">Historial de registros</div>
+            <div class="table-scroll">
+              <table class="hist-table">
+                <thead><tr><th>Fecha</th><th>Peso</th><th>Δ Peso</th><th>% Grasa</th><th>Cintura</th><th>Pecho</th><th>Brazo</th><th>Muslo</th><th>Notas</th><th></th></tr></thead>
+                <tbody id="prg-history-body"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
-        <!-- Mini bar chart -->
-        <div id="weight-chart" style="display:flex;align-items:flex-end;gap:3px;min-height:90px;background:var(--card2);border-radius:7px;padding:8px;overflow-x:auto"></div>
-        <!-- Log list -->
-        <div id="weight-list" style="max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:3px"></div>
       </div>
-
     </div>
   </div>
+
 </div><!-- /app-main -->
 
 <script type="module">
@@ -1209,18 +1214,9 @@ const RAPIDAPI_KEY  = '';
 // API key se carga desde Supabase app_settings — nunca hardcodeada aquí
 let ANTHROPIC_KEY = '';
 
-// Dynamic supermarkets — stored in localStorage per user
-let SUPERS = JSON.parse(localStorage.getItem('nc_supers') || JSON.stringify([
-  {key:'mercadona', label:'Mercadona'},
-  {key:'lidl',     label:'Lidl'},
-  {key:'aldi',     label:'Aldi'}
-]));
-// Helper to get keys/labels
-function superKeys(){ return SUPERS.map(s=>s.key); }
-function superLabel(k){ return (SUPERS.find(s=>s.key===k)||{label:k}).label; }
-const PALETTE=['var(--accent)','var(--accent2)','var(--orange)','var(--blue)','var(--purple)','var(--accent3)'];
-function superColor(k){ const i=SUPERS.findIndex(s=>s.key===k); return PALETTE[i%PALETTE.length]; }
-function saveSupers(){ localStorage.setItem('nc_supers',JSON.stringify(SUPERS)); }
+const SUPERS = ['merc','lidl','carrefour','dia','eroski'];
+const SUPER_LABELS = {merc:'Mercadona',lidl:'Lidl',carrefour:'Carrefour',dia:'Dia',eroski:'Eroski'};
+const SUPER_COLORS = {merc:'var(--accent)',lidl:'var(--accent2)',carrefour:'var(--blue)',dia:'var(--orange)',eroski:'var(--purple)'};
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -1419,59 +1415,30 @@ document.addEventListener('click', (e) => {
 //  BOOTSTRAP
 // ══════════════════════════════════════════════════════
 async function boot() {
-  // Anti-loop protection
-  const attempts = parseInt(sessionStorage.getItem('nc_boot_attempts')||'0') + 1;
-  sessionStorage.setItem('nc_boot_attempts', attempts);
-  if(attempts > 3){
-    sessionStorage.removeItem('nc_boot_attempts');
-    document.getElementById('app-loading').innerHTML = `
-      <div class="load-mark" style="background:var(--red)">!</div>
-      <p style="color:var(--red);font-size:13px;text-align:center;max-width:280px;margin:8px 0">
-        Error al conectar. La sesión puede haber expirado.
-      </p>
-      <button onclick="forceLogout()" style="background:var(--red);color:#fff;border:none;padding:10px 22px;border-radius:8px;font-family:'Syne',sans-serif;font-weight:800;font-size:12px;cursor:pointer;margin-top:4px">
-        ↩ Volver al login
-      </button>`;
-    return;
-  }
-
   try{
-    const { data: { session }, error: sErr } = await sb.auth.getSession();
-    if (!session || sErr) {
-      sessionStorage.removeItem('nc_boot_attempts');
-      window.location.href = 'login.html'; return;
-    }
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return; }
     currentUser = session.user;
 
     setLoadText('Cargando perfil...');
-    const { data: profile, error: pErr } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
-    if (!profile) {
-      // Trigger might be slow — try to create profile
-      const meta = currentUser.user_metadata || {};
-      await sb.from('profiles').upsert({
-        id: currentUser.id, email: currentUser.email,
-        full_name: meta.full_name || currentUser.email.split('@')[0],
-        role: meta.role || 'client'
-      }, {onConflict:'id'});
-      const { data: profile2 } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
-      if (!profile2){ sessionStorage.removeItem('nc_boot_attempts'); window.location.href = 'login.html'; return; }
-      currentProfile = profile2;
-    } else {
-      currentProfile = profile;
-    }
-    sessionStorage.removeItem('nc_boot_attempts');
+    const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+    if (!profile) { window.location.href = 'login.html'; return; }
+    currentProfile = profile;
 
-    const isCoach = currentProfile.role === 'coach';
-    document.getElementById('sb-username').textContent = currentProfile.full_name || currentProfile.email;
+    const isCoach = profile.role === 'coach';
+    document.getElementById('sb-username').textContent = profile.full_name || profile.email;
     document.getElementById('sb-role').textContent     = isCoach ? '👨‍💼 Entrenador' : '🏋️ Cliente';
-    document.getElementById('sb-avatar').textContent   = (currentProfile.full_name||currentProfile.email||'?')[0].toUpperCase();
-    // Load avatar from localStorage
+    document.getElementById('sb-avatar').textContent   = (profile.full_name||profile.email||'?')[0].toUpperCase();
+    // Restore saved avatar
     const _savedAvatar = localStorage.getItem('nc_avatar_'+currentUser.id);
-    if(_savedAvatar) applySidebarAvatar(_savedAvatar);
+    if(_savedAvatar){
+      const av=document.getElementById('sb-avatar');
+      if(av){av.style.backgroundImage=`url(${_savedAvatar})`;av.style.backgroundSize='cover';av.style.backgroundPosition='center';av.textContent='';}
+    }
 
     if (isCoach) {
       document.getElementById('client-selector').style.display = 'block';
-      document.querySelector('.coach-only-nav').style.display  = 'flex';
+      // GIF lib shown in boot finally block
       setLoadText('Cargando clientes...');
       await loadClients();
     } else {
@@ -1507,16 +1474,9 @@ async function boot() {
   }finally{
     // Siempre quita la pantalla de carga
     document.getElementById('app-loading').classList.add('hidden');
-    document.querySelectorAll('.nav-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const tab = item.dataset.tab;
-        if (!tab) return;
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        item.classList.add('active');
-        showTab(tab);
-        if (window.innerWidth <= 768) closeSidebar();
-      });
-    });
+    // GIF Library only visible to coaches
+    const gifNav = document.getElementById('nav-giflib');
+    if(gifNav) gifNav.style.display = (currentProfile?.role==='coach') ? 'flex' : 'none';
     renderResumen();
   }
 }
@@ -2040,7 +2000,6 @@ function renderRecipeEditor(){
   }
   const r=RECIPES.find(x=>x.id===currentRecipeId);
   if(!r)return;
-  const canEditRecipe = isCoachView();
 
   const ingsHtml=(r.items||[]).map((ing,idx)=>`
     <div class="rec-ing-row" id="rec-ing-${r.id}-${idx}">
@@ -2295,102 +2254,47 @@ function estCost(k,qty,u,s){
   const packs=(pu!=='ud'&&(u==='g'||u==='ml'))?Math.ceil(qty/pq):1;
   return+(packs*p).toFixed(2);
 }
-function renderSuperUI(){
-  // Rebuild supermarket chips + totals bar dynamically
-  const chipsWrap = document.getElementById('super-chips-wrap');
-  const totalsBar = document.getElementById('price-total-bar');
-  if(chipsWrap){
-    chipsWrap.innerHTML = SUPERS.map((s,i)=>`
-      <div class="super-chip ${activeSuperKey===s.key?'active':''}" onclick="filterSuper('${s.key}')">
-        <span>${s.label}</span>
-        <span onclick="event.stopPropagation();removeSuper('${s.key}')" style="margin-left:3px;color:var(--muted);cursor:pointer;font-size:13px;line-height:1">×</span>
-      </div>`).join('')
-      + `<button class="add-super-btn" onclick="addSupermarket()">+ Añadir</button>`;
-  }
-  if(totalsBar){
-    totalsBar.innerHTML = `<div class="price-box"><div class="pb-label">💰 Mejor total</div><div class="pb-val" id="total-global">—</div></div>`
-      + SUPERS.map((s,i)=>`<div class="price-box" id="pbox-${s.key}"><div class="pb-label">${s.label}</div><div class="pb-val" id="total-${s.key}" style="color:${PALETTE[i%PALETTE.length]}">—</div></div>`).join('');
-  }
-  // rebuild table header
-  const thead = document.getElementById('compra-thead');
-  if(thead){
-    thead.innerHTML = `<tr>
-      <th></th><th>Producto</th><th>Total semana</th><th>Stock</th><th>Necesitas</th>
-      ${SUPERS.map(s=>`<th style="color:${superColor(s.key)}">${s.label}</th>`).join('')}
-      <th>💰 Mejor</th>
-    </tr>`;
-  }
-}
-
-let activeSuperKey = '';  // '' = all
-
-window.filterSuper = (key) => {
-  activeSuperKey = activeSuperKey === key ? '' : key;
-  renderSuperUI();
-  renderCompra();
-};
-
-window.addSupermarket = () => {
-  const name = prompt('Nombre del supermercado (ej: Costco):');
-  if(!name||!name.trim()) return;
-  const label = name.trim();
-  const key = label.toLowerCase().replace(/\s+/g,'_');
-  if(SUPERS.find(s=>s.key===key)){ toast('Ya existe'); return; }
-  SUPERS.push({key, label});
-  saveSupers();
-  renderSuperUI();
-  renderCompra();
-  toast(`✓ ${label} añadido`);
-};
-
-window.removeSuper = (key) => {
-  if(!confirm(`¿Eliminar "${superLabel(key)}" de la lista?`)) return;
-  SUPERS = SUPERS.filter(s=>s.key!==key);
-  if(activeSuperKey===key) activeSuperKey='';
-  saveSupers();
-  renderSuperUI();
-  renderCompra();
-};
-
 function renderCompra(){
-  renderSuperUI();
   const COMPRA=getCompraList();
   const soloFalta=document.getElementById('chk-solo-falta')?.checked||false;
   let rows='';
-  const totals={};
-  SUPERS.forEach(s=>totals[s.key]=0);
-
+  const totals={merc:0,lidl:0,carrefour:0,dia:0,eroski:0};
   COMPRA.forEach((item,i)=>{
-    const k=item.p, pr=PRICES[k], stk=STOCK[k]||{qty:0,u:item.u};
+    const k=item.p,pr=PRICES[k],stk=STOCK[k]||{qty:0,u:item.u};
     const needed=Math.max(0,+(item.qty-stk.qty).toFixed(3));
     if(soloFalta&&needed<=0)return;
-    // filter by active super
-    if(activeSuperKey){
-      if(!pr||pr[activeSuperKey]===null||pr[activeSuperKey]===undefined)return;
+    // filter by selected super
+    if(currentSuperTab!=='all'&&currentSuperTab!=='pendientes'){
+      if(!pr||pr[currentSuperTab]===null||pr[currentSuperTab]===undefined)return;
     }
+    if(currentSuperTab==='pendientes'&&pr)return;
+    // stock display
     const nTxt=needed<=0
       ?`<span class="stock-ok">✓ OK</span>`
       :`<span class="${stk.qty>0?'stock-low':'stock-empty'}">${needed.toFixed(0)} ${item.u}</span>`;
     const sDisp=`<input class="stock-input" type="number" min="0" value="${stk.qty}" onchange="updStock('${k}','${item.u}',+this.value)">`;
+    // compute costs per super
     const costs={};
     SUPERS.forEach(s=>{
-      if(needed>0){const c=estCost(k,needed,item.u,s.key);costs[s.key]=c;if(c)totals[s.key]+=c;}
-      else costs[s.key]=null;
+      if(needed>0){const c=estCost(k,needed,item.u,s);costs[s]=c;if(c)totals[s]+=c;}
+      else{costs[s]=null;}
     });
-    const validCosts=Object.values(costs).filter(v=>v!==null&&v>0);
+    const validCosts=SUPERS.map(s=>costs[s]).filter(v=>v!==null&&v>0);
     const minCost=validCosts.length?Math.min(...validCosts):null;
-    const superCells=SUPERS.map((s,idx)=>{
-      const unitP=pr?pr[s.key]:null;
-      const col=PALETTE[idx%PALETTE.length];
+    // build price cells per super
+    const superCells=SUPERS.map(s=>{
+      const unitP=pr?pr[s]:null;
       if(unitP===null||unitP===undefined) return `<td style="color:var(--muted);text-align:center;font-size:10px">—</td>`;
-      const isBest=minCost!==null&&costs[s.key]===minCost;
+      const isBest=minCost!==null&&costs[s]===minCost;
+      const col=SUPER_COLORS[s];
       if(needed<=0) return `<td style="text-align:center"><span class="price-chip" style="color:${col};font-size:9px">${unitP}€</span></td>`;
-      return `<td style="text-align:center"><span class="price-chip ${isBest?'cheapest':'normal'}" style="${isBest?'':'color:'+col}">${costs[s.key]!==null?costs[s.key]+'€':'—'}<br><span style="opacity:.55;font-size:8px">(${unitP}€/u)</span></span></td>`;
+      return `<td style="text-align:center"><span class="price-chip ${isBest?'cheapest':'normal'}" style="${isBest?'':'color:'+col}">${costs[s]!==null?costs[s]+'€':'—'}<br><span style="opacity:.55;font-size:8px">(${unitP}€/u)</span></span></td>`;
     }).join('');
+    // best super label
     let bestLabel='—';
     if(minCost!==null){
-      const bs=SUPERS.find(s=>costs[s.key]===minCost);
-      if(bs) bestLabel=`<span style="color:${superColor(bs.key)};font-weight:700;font-family:'Syne',sans-serif;font-size:10px">${bs.label}<br><span style="font-size:11px">${minCost}€</span></span>`;
+      const bs=SUPERS.find(s=>costs[s]===minCost);
+      if(bs) bestLabel=`<span style="color:${SUPER_COLORS[bs]};font-weight:700;font-family:'Syne',sans-serif;font-size:10px">${SUPER_LABELS[bs]}<br><span style="font-size:11px">${minCost}€</span></span>`;
     }
     const chk=CHECKED[i]||false;
     rows+=`<tr style="${chk?'opacity:.38;text-decoration:line-through':''}">
@@ -2403,20 +2307,21 @@ function renderCompra(){
       <td>${bestLabel}</td>
     </tr>`;
   });
-  const colCount = 6 + SUPERS.length;
-  document.getElementById('compra-body').innerHTML=rows||`<tr><td colspan="${colCount}" style="text-align:center;padding:20px;color:var(--muted2)">Sin ingredientes en la dieta</td></tr>`;
-  const vals=Object.values(totals).filter(v=>v>0);
+  document.getElementById('compra-body').innerHTML=rows||`<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--muted2)">Sin ingredientes en la dieta</td></tr>`;
+  // update totals bar
+  const vals=SUPERS.map(s=>totals[s]).filter(v=>v>0);
   const minTotal=vals.length?Math.min(...vals):null;
   SUPERS.forEach(s=>{
-    const el=document.getElementById('total-'+s.key);
-    if(el) el.textContent=totals[s.key]>0?totals[s.key].toFixed(2)+'€':'—';
+    const el=document.getElementById('total-'+s);
+    if(el) el.textContent=totals[s]>0?totals[s].toFixed(2)+'€':'—';
   });
-  if(document.getElementById('total-global'))
-    document.getElementById('total-global').textContent=minTotal?minTotal.toFixed(2)+'€':'—';
+  document.getElementById('total-global').textContent=minTotal?minTotal.toFixed(2)+'€':'—';
+  // highlight best super box
   document.querySelectorAll('.price-total-bar .price-box').forEach(b=>b.classList.remove('best-super'));
   if(minTotal){
-    const bs=SUPERS.find(s=>Math.abs(totals[s.key]-minTotal)<0.001);
-    if(bs){ const el=document.getElementById('total-'+bs.key); if(el) el.closest('.price-box')?.classList.add('best-super'); }
+    const bs=SUPERS.find(s=>Math.abs(totals[s]-minTotal)<0.001);
+    const el=document.getElementById('total-'+bs);
+    if(el) el.closest('.price-box').classList.add('best-super');
   }
 }
 window.togCheck=(i,v)=>{CHECKED[i]=v;renderCompra();};
@@ -2942,19 +2847,43 @@ async function aiRefreshPrices(force=false){
     // Get all products to price (diet + DB)
     const allProducts=[...new Set([...getCompraList().map(i=>i.p),...Object.keys(DB)])].slice(0,70);
 
-    // Call via Supabase Edge Function (la key nunca sale del servidor)
-    const {data:fnData,error:fnError}=await sb.functions.invoke('ai-prices',{
-      body:{products:allProducts}
+    // Call Anthropic directly with the stored key
+    const aiRes = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':ANTHROPIC_KEY,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-haiku-4-5-20251001',
+        max_tokens:2000,
+        messages:[{role:'user',content:`Eres un asistente de precios de supermercados en España.
+Devuelve SOLO un JSON con precios estimados actuales (2024-2025) para los siguientes productos en Mercadona, Lidl, Aldi, Carrefour y Dia.
+Formato: {"producto":{"mercadona":precio,"lidl":precio,"aldi":precio,"carrefour":precio,"dia":precio,"base":"cantidad"},...}
+Usa null si el producto no está disponible en ese super.
+Productos: ${allProducts.join(', ')}
+IMPORTANTE: Responde SOLO con el JSON sin markdown.`}]
+      })
     });
-    if(fnError)throw new Error(fnError.message);
-    const apiData=fnData;
+    if(!aiRes.ok) throw new Error('Anthropic API error: '+aiRes.status);
+    const apiData = await aiRes.json();
     const text=apiData.content?.find(b=>b.type==='text')?.text||'{}';
     const clean=text.replace(/```json|```/g,'').trim();
     const freshPrices=JSON.parse(clean);
-    // Merge into PRICES
+    // Merge into PRICES (map new AI keys → existing super keys)
+    const KEY_MAP={'mercadona':'merc','lidl':'lidl','aldi':'aldi','carrefour':'carrefour','dia':'dia','eroski':'eroski'};
     let count=0;
     Object.entries(freshPrices).forEach(([k,v])=>{
-      if(typeof v==='object'&&v!==null){PRICES[k]={...(PRICES[k]||{}),...v};count++;}
+      if(typeof v==='object'&&v!==null){
+        const mapped={};
+        Object.entries(v).forEach(([sk,price])=>{
+          if(sk==='base') mapped.base=price;
+          else mapped[KEY_MAP[sk]||sk]=price;
+        });
+        PRICES[k]={...(PRICES[k]||{}),...mapped};count++;
+      }
     });
     // Cache for today
     localStorage.setItem(AI_PRICE_CACHE_KEY,JSON.stringify({date:new Date().toISOString().slice(0,10),data:freshPrices}));
@@ -2990,6 +2919,42 @@ window.toggleSidebar=()=>{const s=document.getElementById('sidebar');const o=doc
 window.closeSidebar=()=>{document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('visible');};
 window.switchClient=switchClient;
 
+// ── NAV HELPERS ──
+window.navItemClick = (el, e) => {
+  const tab = el.dataset.tab;
+  if(!tab) return;
+  const sub = document.getElementById('sub-'+tab);
+  // If has submenu: toggle it, but also navigate to the tab itself
+  if(sub){
+    const isOpen = sub.classList.contains('open');
+    // Close all submenus
+    document.querySelectorAll('.nav-submenu').forEach(s=>s.classList.remove('open'));
+    document.querySelectorAll('.nav-chevron').forEach(c=>{c.style.transform='';});
+    if(!isOpen){
+      sub.classList.add('open');
+      const chev=document.getElementById('chev-'+tab);
+      if(chev) chev.style.transform='rotate(90deg)';
+    }
+  } else {
+    document.querySelectorAll('.nav-submenu').forEach(s=>s.classList.remove('open'));
+    document.querySelectorAll('.nav-chevron').forEach(c=>{c.style.transform='';});
+  }
+  // Mark active
+  document.querySelectorAll('.nav-item,.nav-sub-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  showTab(tab);
+  if(window.innerWidth<=768) closeSidebar();
+};
+
+window.navSubClick = (el) => {
+  const tab = el.dataset.tab;
+  if(!tab) return;
+  document.querySelectorAll('.nav-item,.nav-sub-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  showTab(tab);
+  if(window.innerWidth<=768) closeSidebar();
+};
+
 function showTab(name){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   const panel=document.getElementById('panel-'+name);if(panel)panel.classList.add('active');
@@ -3012,17 +2977,14 @@ function showTab(name){
     setTimeout(()=>{
       const pn=document.getElementById('personal-notes');if(pn)pn.value=personalNotes;
       if(isCoachView()){
-        document.querySelector('.coach-feedback-area').style.display='block';
+        const cfa=document.querySelector('.coach-feedback-area');
+        if(cfa) cfa.style.display='block';
       }
     },0);
   }
+  if(name==='perfil') initProfilePanel();
 }
 
-window.forceLogout=async()=>{
-  try{ await sb.auth.signOut(); }catch(e){}
-  sessionStorage.clear();
-  window.location.href='login.html';
-};
 window.confirmLogout=async()=>{if(!confirm('¿Cerrar sesión?'))return;await sb.auth.signOut();window.location.href='login.html';};
 
 // ══════════════════════════════════════════════════════
@@ -3613,6 +3575,147 @@ function renderProgressHistory() {
       <td style="color:var(--muted2);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${entry.notes||''}">${entry.notes || '—'}</td>
       <td><button class="btn danger xs" onclick="deleteProgressEntry('${entry.id}')">✕</button></td>
     </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  PROFILE + WEIGHT
+// ══════════════════════════════════════════════════════
+let weightLog = [];
+
+function initProfilePanel(){
+  if(!currentProfile) return;
+  const ni = document.getElementById('profile-name-inp');
+  if(ni) ni.value = currentProfile.full_name || '';
+  const ai = document.getElementById('profile-avatar-initials');
+  if(ai) ai.textContent = (currentProfile.full_name||currentProfile.email||'?')[0].toUpperCase();
+  // Restore avatar
+  const savedUrl = localStorage.getItem('nc_avatar_'+currentUser.id);
+  if(savedUrl) applyAvatar(savedUrl);
+  // Load weight log
+  try{ weightLog = JSON.parse(localStorage.getItem('nc_weight_'+currentUser.id)||'[]'); }
+  catch(e){ weightLog=[]; }
+  renderWeightLog();
+  // Load progress
+  loadProgressFromServer().then(()=>{ initProgressForm(); renderProgress(); });
+}
+
+function applyAvatar(url){
+  const img = document.getElementById('profile-avatar-img');
+  const ini = document.getElementById('profile-avatar-initials');
+  if(img){ img.src=url; img.style.display='block'; }
+  if(ini) ini.style.display='none';
+  // Also update sidebar avatar
+  const av = document.getElementById('sb-avatar');
+  if(av && url){
+    av.style.backgroundImage=`url(${url})`;
+    av.style.backgroundSize='cover';
+    av.style.backgroundPosition='center';
+    av.textContent='';
+  }
+}
+
+window.uploadAvatar = (input) => {
+  const file = input.files[0];
+  if(!file) return;
+  if(file.size > 2*1024*1024){ toast('Imagen demasiado grande (máx 2MB)'); return; }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const url = e.target.result;
+    localStorage.setItem('nc_avatar_'+currentUser.id, url);
+    applyAvatar(url);
+    toast('✓ Foto de perfil actualizada');
+  };
+  reader.readAsDataURL(file);
+};
+
+window.saveProfileName = async () => {
+  const name = document.getElementById('profile-name-inp')?.value?.trim();
+  if(!name){ toast('Introduce un nombre'); return; }
+  const {error} = await sb.from('profiles').update({full_name:name}).eq('id',currentUser.id);
+  if(error){ toast('Error: '+error.message); return; }
+  currentProfile.full_name = name;
+  document.getElementById('sb-username').textContent = name;
+  const av = document.getElementById('sb-avatar');
+  if(av && !av.style.backgroundImage){
+    av.textContent = name[0].toUpperCase();
+  }
+  toast('✓ Nombre guardado');
+};
+
+window.changePassword = async () => {
+  const pass = document.getElementById('profile-newpass')?.value;
+  if(!pass||pass.length<8){ toast('Mínimo 8 caracteres'); return; }
+  const {error} = await sb.auth.updateUser({password:pass});
+  if(error){ toast('Error: '+error.message); return; }
+  document.getElementById('profile-newpass').value='';
+  toast('✓ Contraseña actualizada');
+};
+
+window.deleteAccount = async () => {
+  if(!confirm('⚠️ ¿Eliminar tu cuenta? Esta acción NO se puede deshacer.')) return;
+  const confirmTxt = prompt('Escribe ELIMINAR para confirmar:');
+  if(confirmTxt !== 'ELIMINAR'){ toast('Cancelado'); return; }
+  try{
+    await sb.from('client_diets').delete().eq('client_id',currentUser.id);
+    await sb.from('training_logs').delete().eq('client_id',currentUser.id);
+    await sb.from('client_stock').delete().eq('client_id',currentUser.id);
+    await sb.from('client_notes').delete().eq('client_id',currentUser.id);
+    await sb.from('profiles').delete().eq('id',currentUser.id);
+    await sb.auth.signOut();
+  }catch(e){}
+  window.location.href='login.html';
+};
+
+window.logWeight = () => {
+  const val = parseFloat(document.getElementById('weight-inp')?.value);
+  if(isNaN(val)||val<30||val>300){ toast('Peso no válido'); return; }
+  const today = new Date().toISOString().split('T')[0];
+  weightLog = weightLog.filter(e=>e.date!==today);
+  weightLog.push({date:today, w:val});
+  weightLog.sort((a,b)=>a.date.localeCompare(b.date));
+  localStorage.setItem('nc_weight_'+currentUser.id, JSON.stringify(weightLog));
+  document.getElementById('weight-inp').value='';
+  renderWeightLog();
+  toast(`⚖️ ${val} kg registrado`);
+};
+
+window.removeWeight = (date) => {
+  weightLog = weightLog.filter(e=>e.date!==date);
+  localStorage.setItem('nc_weight_'+currentUser.id, JSON.stringify(weightLog));
+  renderWeightLog();
+};
+
+function renderWeightLog(){
+  const chart = document.getElementById('weight-chart');
+  const list  = document.getElementById('weight-list');
+  if(!chart||!list) return;
+  if(!weightLog.length){
+    chart.innerHTML=`<div style="color:var(--muted2);font-size:10px;text-align:center;width:100%;padding:6px">Sin registros aún</div>`;
+    list.innerHTML=''; return;
+  }
+  const recent = weightLog.slice(-20);
+  const min = Math.min(...recent.map(e=>e.w))-0.5;
+  const max = Math.max(...recent.map(e=>e.w))+0.5;
+  const range = max-min||1;
+  chart.innerHTML = recent.map(e=>{
+    const pct = Math.round(((e.w-min)/range)*90);
+    const d   = e.date.slice(5);
+    return `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex:1;min-width:18px">
+      <span style="font-size:7px;color:var(--accent);font-weight:700">${e.w}</span>
+      <div style="width:100%;background:var(--border);border-radius:2px;height:50px;display:flex;align-items:flex-end">
+        <div style="width:100%;height:${pct}%;background:var(--accent2);border-radius:2px"></div>
+      </div>
+      <span style="font-size:6px;color:var(--muted2)">${d}</span>
+    </div>`;
+  }).join('');
+  list.innerHTML = [...weightLog].reverse().slice(0,6).map(e=>{
+    const d = new Date(e.date+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'});
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 8px;background:var(--bg2);border-radius:5px">
+      <span style="color:var(--muted2);font-size:10px">${d}</span>
+      <span style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent);font-size:13px">${e.w} kg</span>
+      <button onclick="removeWeight('${e.date}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 2px">×</button>
+    </div>`;
   }).join('');
 }
 

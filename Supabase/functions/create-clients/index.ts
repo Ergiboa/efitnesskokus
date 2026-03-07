@@ -1,8 +1,6 @@
 // supabase/functions/create-client/index.ts
-// Deploy:  supabase functions deploy create-client
-// Secret:  supabase secrets set SUPABASE_SERVICE_KEY=eyJ...  (service_role key, NO la anon)
-//
-// La service_role key está en: Supabase Dashboard → Settings → API → service_role
+// Deploy: supabase functions deploy create-client
+// No necesita secrets — lee la service key de la tabla app_settings
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -24,28 +22,25 @@ serve(async (req) => {
     });
 
   try {
-    // ── 1. Verificar que el que llama es un coach autenticado ──────────────
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) return respond({ error: "No autorizado" }, 401);
 
-    const supabaseUrl  = Deno.env.get("SUPABASE_URL") ?? "";
-    const anonKey      = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-    const serviceKey   = Deno.env.get("SUPABASE_SERVICE_KEY") ?? "";
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+    const anonKey    = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
 
-    if (!serviceKey) return respond({ error: "SUPABASE_SERVICE_KEY no configurada en secrets" }, 500);
-
-    // Cliente con la sesión del coach (para verificar identidad)
+    // Cliente con la sesion del coach
     const coachClient = createClient(supabaseUrl, anonKey, {
       global: { headers: { Authorization: authHeader } },
     });
 
+    // Verificar sesion
     const { data: { user: coachUser }, error: authErr } = await coachClient.auth.getUser();
-    if (authErr || !coachUser) return respond({ error: "Sesión inválida" }, 401);
+    if (authErr || !coachUser) return respond({ error: "Sesion invalida" }, 401);
 
-    // Verificar que es coach
+    // Verificar que es coach Y obtener la service key de app_settings
     const { data: coachProfile } = await coachClient
       .from("profiles")
-      .select("role, full_name")
+      .select("role")
       .eq("id", coachUser.id)
       .single();
 
@@ -53,17 +48,32 @@ serve(async (req) => {
       return respond({ error: "Solo los entrenadores pueden crear clientes" }, 403);
     }
 
-    // ── 2. Parsear datos del nuevo cliente ────────────────────────────────
+    // Leer service key desde app_settings (igual que la anthropic_key)
+    const { data: settings } = await coachClient
+      .from("app_settings")
+      .select("supabase_service_key")
+      .eq("user_id", coachUser.id)
+      .maybeSingle();
+
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_KEY") || settings?.supabase_service_key || "";
+
+    if (!serviceKey) {
+      return respond({
+        error: "Falta la Supabase Service Key. Anadela en Ajustes de la app."
+      }, 400);
+    }
+
+    // Parsear datos del nuevo cliente
     const { email, password, full_name } = await req.json();
 
     if (!email || !password || !full_name) {
       return respond({ error: "email, password y full_name son obligatorios" }, 400);
     }
     if (password.length < 6) {
-      return respond({ error: "La contraseña debe tener al menos 6 caracteres" }, 400);
+      return respond({ error: "La contrasena debe tener al menos 6 caracteres" }, 400);
     }
 
-    // ── 3. Crear usuario con Admin API (service role key) ─────────────────
+    // Crear usuario con Admin API usando la service key
     const adminClient = createClient(supabaseUrl, serviceKey, {
       auth: { autoRefreshToken: false, persistSession: false },
     });
@@ -71,33 +81,29 @@ serve(async (req) => {
     const { data: newUser, error: createErr } = await adminClient.auth.admin.createUser({
       email,
       password,
-      email_confirm: true,           // confirmar email automáticamente
+      email_confirm: true,
       user_metadata: { full_name },
     });
 
     if (createErr) {
-      // Mensaje legible para errores comunes
       const msg = createErr.message.includes("already registered")
         ? "Ya existe un usuario con ese email"
         : createErr.message;
       return respond({ error: msg }, 400);
     }
 
-    // ── 4. Actualizar perfil: asignar rol client + coach_id ───────────────
-    // El trigger handle_new_user ya habrá creado la fila básica,
-    // así que hacemos upsert para añadir role y coach_id
+    // Asignar rol client + coach_id en profiles
     const { error: profileErr } = await adminClient
       .from("profiles")
       .upsert({
-        id:        newUser.user.id,
+        id:       newUser.user.id,
         email,
         full_name,
-        role:      "client",
-        coach_id:  coachUser.id,
+        role:     "client",
+        coach_id: coachUser.id,
       }, { onConflict: "id" });
 
     if (profileErr) {
-      // Si falla el perfil, intentar eliminar el usuario creado para no dejar basura
       await adminClient.auth.admin.deleteUser(newUser.user.id);
       return respond({ error: "Error al crear perfil: " + profileErr.message }, 500);
     }

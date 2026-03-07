@@ -1315,6 +1315,7 @@ let trnTabMode      = 'routines';
 const MEAL_LABELS  = {desayuno:'🌅 Desayuno',comida:'🍽 Comida',preEntreno:'⚡ Pre-entreno',cena:'🌙 Cena',preCama:'🛌 Pre-cama'};
 const MEALS_ORDER  = ['desayuno','comida','preEntreno','cena','preCama'];
 const DAY_LABELS   = ['LUN','MAR','MIE','JUE','VIE','SAB','DOM'];
+const DIET_DAY_ORDER = ['LUNES','MARTES','MIERCOLES','JUEVES','VIERNES','SABADO','DOMINGO'];
 const MUSCLES_LIST = ['Pecho','Espalda','Hombros','Bíceps','Tríceps','Piernas','Glúteos','Core','Cardio','Full Body'];
 
 // ══════════════════════════════════════════════════════
@@ -1746,7 +1747,7 @@ function dayMac(dayObj) {
   Object.values(dayObj).forEach(its=>{const m=sumMac(its);t.kcal+=+m.kcal;t.prot+=+m.prot;t.carb+=+m.carb;t.fat+=+m.fat;t.fib+=+m.fib;});
   return{kcal:+t.kcal.toFixed(0),prot:+t.prot.toFixed(1),carb:+t.carb.toFixed(1),fat:+t.fat.toFixed(1),fib:+t.fib.toFixed(1)};
 }
-function getCompraList(){const map={};Object.values(DIET).forEach(d=>Object.values(d).forEach(its=>its.forEach(i=>{if(!i.p)return;const k=i.p.toLowerCase().trim();if(!map[k])map[k]={p:k,qty:0,u:i.u};map[k].qty+=i.qty;})));return Object.values(map).sort((a,b)=>a.p.localeCompare(b.p));}
+function getCompraList(){const map={};const _orderedDays=[...DIET_DAY_ORDER.filter(d=>DIET[d]),...Object.keys(DIET).filter(d=>!DIET_DAY_ORDER.includes(d))];_orderedDays.map(d=>DIET[d]).forEach(d=>Object.values(d).forEach(its=>its.forEach(i=>{if(!i.p)return;const k=i.p.toLowerCase().trim();if(!map[k])map[k]={p:k,qty:0,u:i.u};map[k].qty+=i.qty;})));return Object.values(map).sort((a,b)=>a.p.localeCompare(b.p));}
 
 // ══════════════════════════════════════════════════════
 //  MICROS ENGINE
@@ -1802,7 +1803,7 @@ function topSources(vit,n=3){
 //  RENDER: RESUMEN
 // ══════════════════════════════════════════════════════
 function renderResumen(){
-  const days=Object.keys(DIET);let sk=0,sp=0,sc=0,sf=0,sfib=0,rows='';
+  const days=[...DIET_DAY_ORDER.filter(d=>DIET[d]),...Object.keys(DIET).filter(d=>!DIET_DAY_ORDER.includes(d))];let sk=0,sp=0,sc=0,sf=0,sfib=0,rows='';
   days.forEach(d=>{const m=dayMac(DIET[d]);sk+=+m.kcal;sp+=+m.prot;sc+=+m.carb;sf+=+m.fat;sfib+=+m.fib;
     rows+=`<tr><td style="font-family:'Syne',sans-serif;font-weight:700;font-size:11px">${d}</td><td style="color:var(--accent3)">${m.kcal}</td><td style="color:var(--accent)">${m.prot}</td><td style="color:var(--accent2)">${m.carb}</td><td style="color:var(--orange)">${m.fat}</td><td style="color:var(--purple)">${m.fib}</td></tr>`;});
   const n=days.length||1;
@@ -1884,7 +1885,8 @@ function makeIngNameInput(day, meal, idx, val, locked) {
 function renderDiet(){
   const locked = !isCoachView();
   let html='';
-  Object.entries(DIET).forEach(([day,dayObj])=>{
+  const orderedDietKeys=[...DIET_DAY_ORDER.filter(d=>DIET[d]),...Object.keys(DIET).filter(d=>!DIET_DAY_ORDER.includes(d))];
+  orderedDietKeys.map(day=>[day,DIET[day]]).forEach(([day,dayObj])=>{
     const m=dayMac(dayObj);
     let mcols='';
     MEALS_ORDER.forEach(meal=>{

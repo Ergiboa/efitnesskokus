@@ -2764,7 +2764,7 @@ async function aiRefreshPrices(force=false){
         carrefour:v.carrefour??null,dia:v.dia??null,eroski:v.eroski??null,
         base_unit:v.base||'ud',updated_at:new Date().toISOString()
       }));
-      sb.from('prices').upsert(rows,{onConflict:'coach_id,product'}).catch(()=>{});
+      (async()=>{try{await sb.from('prices').upsert(rows,{onConflict:'coach_id,product'});}catch(e){console.warn('prices upsert:',e);}})();
     }
     setPriceStatus(`✓ Precios IA actualizados — ${count} productos (${new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})})`,'ok');
     toast(`✨ Precios actualizados: ${count} productos`);

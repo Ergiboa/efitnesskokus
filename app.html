@@ -457,6 +457,17 @@ textarea{width:100%;background:transparent;border:none;color:var(--text);font-fa
 .super-tab.active{border-color:var(--accent2);color:var(--accent2);background:rgba(79,242,194,.06)}
 .price-total-bar{display:flex;gap:6px;margin-bottom:11px;flex-wrap:wrap}
 .price-box{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:9px 12px;flex:1;min-width:75px;position:relative}
+@media(max-width:768px){
+  .price-total-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}
+  .price-total-bar .price-box{min-width:0;padding:7px 8px}
+  .price-total-bar .pb-label{font-size:9px}
+  .price-total-bar .pb-val{font-size:16px}
+  #panel-compra .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  #panel-compra table{min-width:520px;font-size:10px}
+  #panel-compra table td,#panel-compra table th{padding:4px 4px}
+  .price-chip{font-size:9px!important;padding:2px 3px!important}
+  #panel-compra .stock-input{width:44px!important;font-size:10px}
+}
 .price-box.best-super{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 .price-box.best-super::after{content:'✓ MÁS BARATO';position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--accent);color:#08090a;font-family:'Syne',sans-serif;font-weight:800;font-size:8px;padding:1px 6px;border-radius:3px;white-space:nowrap}
 .pb-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:1px}
@@ -2415,7 +2426,8 @@ function renderExEditor() {
   if (!ex) return;
   const isCoach = currentProfile.role === 'coach';
   const isEditable = isCoach && ex.source !== 'builtin';
-  const muscleChips = MUSCLES_LIST.map(m => `<span class="ex-mchip ${(ex.muscles||[]).includes(m)?'on':''}" ${isEditable?`onclick="toggleExMuscle('${ex.id}','${m}')"`:'style="cursor:default"'}>${m}</span>`).join('');
+  const canEditTips = isCoach; // Tips always editable regardless of source
+  const muscleChips = MUSCLES_LIST.map(m => `<span class="ex-mchip ${(ex.muscles||[]).includes(m)?'on':''}" ${canEditTips?`onclick="toggleExMuscle('${ex.id}','${m}')"`:'style="cursor:default"'}>${m}</span>`).join('');
 
   area.innerHTML = `<div class="ex-editor">
     <div style="padding:10px 13px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
@@ -2451,9 +2463,9 @@ function renderExEditor() {
       </div>
       <div class="ex-field">
         <label>Consejos técnicos</label>
-        <textarea class="ex-input" style="min-height:70px;resize:vertical" ${isEditable?`onchange="updateExField('${ex.id}','tips',this.value)"`:' readonly style="opacity:.7"'}>${ex.tips||''}</textarea>
+        <textarea class="ex-input" style="min-height:70px;resize:vertical" ${canEditTips?`onchange="updateExField('${ex.id}','tips',this.value)"`:' readonly style="opacity:.7"'}>${ex.tips||''}</textarea>
       </div>
-      ${isEditable?`<div class="ex-actions"><button class="btn" onclick="saveExercise('${ex.id}')">💾 Guardar</button></div>`:''}
+      ${(isEditable||canEditTips)?`<div class="ex-actions"><button class="btn" onclick="saveExercise('${ex.id}')">💾 Guardar</button></div>`:''}
     </div>
   </div>`;
 }
@@ -2594,8 +2606,11 @@ function renderTrnEditor(){
   const r=getRtn(currentRtnId);if(!r){area.innerHTML='';return;}
   const log=getWeekLog(r.id);
   const coach=isCoachView();
+  // Coach can log their own workouts (when viewing self)
+  const selfTraining = isCoachView() && currentClientId === currentUser.id;
+  const canLog = !coach || selfTraining;
   const muscleChips=MUSCLES_LIST.map(m=>`<span class="mchip ${(r.muscles||[]).includes(m)?'on':''}" ${coach?`onclick="toggleMuscle('${r.id}','${m}')"`:'style="cursor:default"'}>${m}</span>`).join('');
-  const exBlocks=(r.exercises||[]).map((ex,ei)=>renderExBlock(r.id,ex,ei,log,coach)).join('');
+  const exBlocks=(r.exercises||[]).map((ex,ei)=>renderExBlock(r.id,ex,ei,log,coach,canLog)).join('');
   const isDone=log.done;
   const doneBtn=isDone?`<button class="btn ghost sm" onclick="markRtnDone('${r.id}',false)">↺ Desmarcar</button>`:`<button class="btn teal sm" onclick="markRtnDone('${r.id}',true)">✓ Marcar hecha</button>`;
   area.innerHTML=`<div class="rtn-editor">
@@ -2613,7 +2628,7 @@ function renderTrnEditor(){
   </div>`;
 }
 
-function renderExBlock(rid,ex,ei,log,coach){
+function renderExBlock(rid,ex,ei,log,coach,canLog=false){
   const exLog=(log.exercises&&log.exercises[ex.id])||{sets:[],rpe:0};
   const prevLog=getPrevWeekLog(rid,ex.id);
   const setsHtml=(ex.sets||[]).map((set,si)=>{
@@ -2624,19 +2639,19 @@ function renderExBlock(rid,ex,ei,log,coach){
     const prevR=prevSet.reps||'—';
     return`<div class="set-row" id="setrow-${rid}-${ex.id}-${si}">
       <span class="set-num">${si+1}</span>
-      ${coach
+      ${(coach && !canLog)
         ? `<input class="set-inp struct-readonly" type="text" value="${set.weight||'—'}" title="Peso planificado">`
         : `<input class="set-inp ${isDone?'done-val':''}" type="number" min="0" placeholder="${prevW}" value="${logSet.weight||''}" onchange="logSetVal('${rid}','${ex.id}',${si},'weight',this.value)" title="Peso (kg)">`}
-      <input class="set-inp ${coach?'struct-readonly':isDone?'done-val':''}" type="${coach?'text':'number'}" min="0" ${coach?`value="${set.reps||'—'}" title="Reps planificadas"`:`placeholder="${prevR}" value="${logSet.reps||set.reps||''}" onchange="logSetVal('${rid}','${ex.id}',${si},'reps',this.value)" title="Reps"`}>
-      <input class="set-inp ${coach?'struct-readonly':''}" type="text" ${coach?`value="${set.time||'—'}" title="Tiempo"`:`placeholder="—" value="${logSet.time||set.time||''}" onchange="logSetVal('${rid}','${ex.id}',${si},'time',this.value)" title="Tiempo"`}>
-      ${coach
+      <input class="set-inp ${(coach&&!canLog)?'struct-readonly':isDone?'done-val':''}" type="${(coach&&!canLog)?'text':'number'}" min="0" ${(coach&&!canLog)?`value="${set.reps||'—'}" title="Reps planificadas"`:`placeholder="${prevR}" value="${logSet.reps||set.reps||''}" onchange="logSetVal('${rid}','${ex.id}',${si},'reps',this.value)" title="Reps"`}>
+      <input class="set-inp ${(coach&&!canLog)?'struct-readonly':''}" type="text" ${(coach&&!canLog)?`value="${set.time||'—'}" title="Tiempo"`:`placeholder="—" value="${logSet.time||set.time||''}" onchange="logSetVal('${rid}','${ex.id}',${si},'time',this.value)" title="Tiempo"`}>
+      ${(coach&&!canLog)
         ? `<span style="color:var(--muted2);font-size:9px;text-align:center">—</span>`
         : `<input type="checkbox" class="set-cb" ${isDone?'checked':''} onchange="logSetDone('${rid}','${ex.id}',${si},this.checked)">`}
       ${coach?`<button class="set-del" onclick="delSet('${rid}',${ei},${si})">×</button>`:`<span></span>`}
     </div>`;
   }).join('');
   const rpeVal=exLog.rpe||0;
-  const rpeBtns=!coach?[...Array(10)].map((_,i)=>`<button class="rpebtn ${rpeVal===i+1?'on':''}" onclick="logRpe('${rid}','${ex.id}',${i+1})">${i+1}</button>`).join(''):'';
+  const rpeBtns=(canLog||!coach)?[...Array(10)].map((_,i)=>`<button class="rpebtn ${rpeVal===i+1?'on':''}" onclick="logRpe('${rid}','${ex.id}',${i+1})">${i+1}</button>`).join(''):'';
   return`<div class="exblock" id="exblock-${rid}-${ex.id}">
     <div class="exblock-head">
       <input class="ex-name-inp" type="text" value="${ex.name}" placeholder="Nombre" ${coach?`onchange="updateExName('${rid}',${ei},this.value)"`:' readonly'}>
@@ -2648,7 +2663,7 @@ function renderExBlock(rid,ex,ei,log,coach){
       <div class="sets-hdr"><span>#</span><span>Peso(kg)</span><span>Reps</span><span>Tiempo</span><span>${coach?'Plan':'✓'}</span><span></span></div>
       <div id="sets-${rid}-${ex.id}">${setsHtml}</div>
     </div>
-    ${!coach?`<div class="rpe-row"><span class="rpe-lbl">RPE:</span>${rpeBtns}</div>`:''}
+    ${(canLog||!coach)?`<div class="rpe-row"><span class="rpe-lbl">RPE:</span>${rpeBtns}</div>`:''}
     ${coach?`<button class="add-set-btn" onclick="addSet('${rid}','${ex.id}')">+ Serie</button>`:''}
   </div>`;
 }
@@ -2658,7 +2673,7 @@ window.deleteRoutine=async(id)=>{if(!confirm('¿Eliminar rutina?')||!isCoachView
 window.updateRtnName=(id,val)=>{const r=getRtn(id);if(!r)return;r.name=val;const li=document.querySelector('.rtn-item.active .rtn-item-name');if(li)li.textContent=val;};
 window.saveRoutineAndToast=async(id)=>{const inp=document.getElementById(`rtnname-${id}`);const r=getRtn(id);if(!r)return;if(inp)r.name=inp.value.trim()||r.name;await saveRoutinesToServer();renderTrnSidebar();renderTrnWeekBar();toast('Rutina guardada ✓');};
 window.toggleMuscle=(rid,m)=>{const r=getRtn(rid);if(!r)return;const i=(r.muscles||[]).indexOf(m);i>=0?r.muscles.splice(i,1):(r.muscles=r.muscles||[],r.muscles.push(m));const chips=document.querySelector('.muscle-chips');if(chips)chips.innerHTML=MUSCLES_LIST.map(mu=>`<span class="mchip ${(r.muscles||[]).includes(mu)?'on':''}" onclick="toggleMuscle('${rid}','${mu}')">${mu}</span>`).join('');};
-window.addExercise=(rid)=>{if(!isCoachView())return;const r=getRtn(rid);if(!r)return;const ex={id:'ex'+Date.now(),name:'',note:'',sets:[{reps:10,weight:'',time:''}],rpe:0};r.exercises.push(ex);const log=getWeekLog(rid);document.getElementById(`exblocks-${rid}`)?.insertAdjacentHTML('beforeend',renderExBlock(rid,ex,r.exercises.length-1,log,true));};
+window.addExercise=(rid)=>{if(!isCoachView())return;const r=getRtn(rid);if(!r)return;const ex={id:'ex'+Date.now(),name:'',note:'',sets:[{reps:10,weight:'',time:''}],rpe:0};r.exercises.push(ex);const log=getWeekLog(rid);const _selfTrn=currentClientId===currentUser.id;document.getElementById(`exblocks-${rid}`)?.insertAdjacentHTML('beforeend',renderExBlock(rid,ex,r.exercises.length-1,log,true,_selfTrn));};
 window.delExercise=(rid,exId)=>{if(!isCoachView())return;const r=getRtn(rid);if(!r)return;r.exercises=r.exercises.filter(e=>e.id!==exId);document.getElementById(`exblock-${rid}-${exId}`)?.remove();};
 window.updateExName=(rid,ei,val)=>{const r=getRtn(rid);if(!r||!r.exercises[ei])return;r.exercises[ei].name=val;};
 window.updateExNote=(rid,ei,val)=>{const r=getRtn(rid);if(!r||!r.exercises[ei])return;r.exercises[ei].note=val;};
@@ -2695,63 +2710,47 @@ window.saveNotesToServer=saveNotesToServer;
 window.saveCoachFeedback=saveCoachFeedback;
 
 // ══════════════════════════════════════════════════════
-//  MERCADONA PRICE FETCHER
+//  MERCADONA PRICE FETCHER (via Algolia — API oficial de tienda.mercadona.es)
 // ══════════════════════════════════════════════════════
 
-// Proxy CORS — allorigins.win como principal, corsproxy.io como fallback
-async function fetchWithProxy(url) {
-  const proxies = [
-    `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
-    `https://corsproxy.io/?${encodeURIComponent(url)}`,
-  ];
-  for (const proxy of proxies) {
-    try {
-      const res = await fetch(proxy, { signal: AbortSignal.timeout(6000) });
-      if (!res.ok) continue;
-      const data = await res.json();
-      // allorigins wraps in {contents: "..."}
-      const raw = data.contents ?? data;
-      return typeof raw === 'string' ? JSON.parse(raw) : raw;
-    } catch(e) { continue; }
-  }
-  throw new Error('No se pudo conectar con ningún proxy CORS');
-}
+const MERC_ALGOLIA_URL = 'https://7uzjkl1dj0-dsn.algolia.net/1/indexes/products_prod_4281_es/query';
+const MERC_ALGOLIA_KEY = '9d8f2e39e90df472b4f2e559a116fe17';
+const MERC_ALGOLIA_APP = '7UZJKL1DJ0';
 
-// Search Mercadona for a product, return best matching price {unit_price, base, name}
 async function searchMercadona(query) {
-  const url = `https://tienda.mercadona.es/api/search/?query=${encodeURIComponent(query)}&lang=es&wh=vlc1`;
-  const data = await fetchWithProxy(url);
-
-  // Response: { results: { products: [...] } }  OR  { products: [...] }
-  const products = data?.results?.products ?? data?.products ?? [];
-  if (!products.length) return null;
-
-  // Score candidates: prefer products whose name contains query words
-  const words = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
-  const scored = products.map(p => {
-    const name = (p.display_name || '').toLowerCase();
-    const matches = words.filter(w => name.includes(w)).length;
-    const pi = p.price_instructions || {};
-    const price = parseFloat(pi.unit_price ?? pi.bulk_price ?? 0);
-    return { name: p.display_name, price, base: pi.reference_format || '1ud', matches, pi };
+  const res = await fetch(MERC_ALGOLIA_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Algolia-Application-Id': MERC_ALGOLIA_APP,
+      'X-Algolia-API-Key': MERC_ALGOLIA_KEY,
+    },
+    body: JSON.stringify({ query, hitsPerPage: 10 }),
+    signal: AbortSignal.timeout(8000)
   });
 
-  // Sort: most word matches first, then cheapest
+  if (!res.ok) throw new Error(`Algolia ${res.status}`);
+  const data = await res.json();
+  const hits = data.hits || [];
+  if (!hits.length) return null;
+
+  // Score: más palabras del ingrediente coinciden con el nombre del hit → mejor
+  const words = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+  const scored = hits.map(h => {
+    const name = (h.display_name || h.name || '').toLowerCase();
+    const matches = words.filter(w => name.includes(w)).length;
+    // Mercadona Algolia fields: price_instructions.unit_price o price.value
+    const pi = h.price_instructions || {};
+    const price = parseFloat(pi.unit_price ?? pi.bulk_price ?? h.price?.value ?? 0);
+    const sizeVal = pi.unit_size ?? h.unit_size ?? '';
+    const sizeUnit = (pi.size_unit || h.unit || '').toLowerCase();
+    const base = sizeVal ? `${sizeVal}${sizeUnit}` : (pi.reference_format || '1ud');
+    return { name: h.display_name || h.name, price, base, matches };
+  }).filter(h => h.price > 0);
+
+  if (!scored.length) return null;
   scored.sort((a, b) => b.matches - a.matches || a.price - b.price);
-  const best = scored[0];
-  if (!best || best.price <= 0) return null;
-
-  // Build base unit from reference_format (e.g. "1 kg" → "kg", "500 g" → "500g")
-  const refFmt = best.pi.reference_format || '';
-  const baseMatch = refFmt.match(/^([\d.,]+)\s*(g|kg|ml|L|ud|u\.?)?/i);
-  let base = best.pi.size_format || refFmt || '1ud';
-  if (baseMatch) {
-    const qty = parseFloat(baseMatch[1].replace(',','.'));
-    const unit = (baseMatch[2] || 'ud').toLowerCase().replace('u.','ud');
-    base = qty === 1 ? `1${unit}` : `${qty}${unit}`;
-  }
-
-  return { name: best.name, price: best.price, base };
+  return scored[0];
 }
 
 // Main: fetch all diet products from Mercadona
@@ -2782,17 +2781,16 @@ window.fetchMercadonaPrices = async () => {
     } catch(e) {
       console.warn('Mercadona fetch error for', p, e);
       fail++;
-      // If first product already fails, proxy might be down
-      if (i === 0 && fail >= 1) {
-        status.textContent = '⚠ No se pudo conectar con Mercadona. Prueba más tarde.';
+      if (i === 0) {
+        status.textContent = '⚠ Error conectando con Mercadona. Prueba más tarde.';
         btn.disabled = false;
         btn.textContent = '🟢 Actualizar precios Mercadona';
-        toast('⚠ Error de conexión con Mercadona.es');
+        toast('⚠ Error de conexión con Mercadona');
         return;
       }
     }
-    // Small delay to avoid rate limiting
-    await new Promise(r => setTimeout(r, 400));
+    // Pequeño delay para no saturar
+    await new Promise(r => setTimeout(r, 200));
   }
 
   // Save to Supabase

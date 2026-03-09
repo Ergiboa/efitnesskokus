@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<script>try{if(localStorage.getItem('efk-theme')==='light')document.documentElement.classList.add('light')}catch(e){}</script>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -21,18 +19,6 @@
   --text:#e8ede8;--muted:#4a544a;--muted2:#7a887a;
   --sidebar-w:256px;
 }
-/* ── LIGHT MODE ── */
-html.light body,body.light{
-  --bg:#f0f4f0;--surface:#e8ece8;--card:#ffffff;--card2:#f2f5f2;
-  --border:#d2d9d2;--border2:#c4ccc4;
-  --accent:#5a9e00;--accent2:#009578;--accent3:#a07800;
-  --red:#d03030;--orange:#b86800;--purple:#6a18b8;--blue:#1068b8;
-  --text:#1a201a;--muted:#8a988a;--muted2:#566056;
-}
-/* Smooth theme transition — exclude transitions that cause jank */
-body,body *{transition:background-color .22s ease,border-color .22s ease,color .22s ease,box-shadow .22s ease}
-/* But keep transform/opacity snappy */
-body *{transition:background-color .22s ease,border-color .22s ease,color .22s ease,box-shadow .22s ease,transform .15s ease,opacity .15s ease}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 input,select,textarea{font-size:16px!important}
@@ -299,7 +285,7 @@ td select{background:var(--card2);color:var(--text);border:1px solid var(--borde
 }
 
 /* ── TRAINING MODULE ── */
-.trn-layout{display:grid;grid-template-columns:220px 1fr;gap:12px;align-items:start}
+.trn-layout{display:grid;grid-template-columns:230px 1fr;gap:12px;align-items:start}
 @media(max-width:768px){.trn-layout{grid-template-columns:1fr}}
 .trn-sidebar{background:var(--card);border:1px solid var(--border);border-radius:9px;overflow:hidden;position:sticky;top:14px}
 @media(max-width:768px){.trn-sidebar{position:static}}
@@ -308,88 +294,67 @@ td select{background:var(--card2);color:var(--text);border:1px solid var(--borde
 .trn-tabs{display:flex;border-bottom:1px solid var(--border)}
 .trn-tab{flex:1;padding:7px 4px;background:none;border:none;color:var(--muted2);cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;font-size:10px;transition:all .15s;border-bottom:2px solid transparent}
 .trn-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.rtn-list{max-height:360px;overflow-y:auto}
-.rtn-item{padding:9px 12px;border-bottom:1px solid var(--card2);cursor:pointer;transition:background .1s}
+.trn-tab:hover:not(.active){color:var(--text)}
+.rtn-list{max-height:340px;overflow-y:auto}
+.rtn-item{padding:8px 12px;border-bottom:1px solid var(--card2);cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .1s}
+.rtn-item:last-child{border-bottom:none}
 .rtn-item:hover{background:var(--card2)}
 .rtn-item.active{background:rgba(194,242,79,.05);border-left:3px solid var(--accent)}
-.rtn-item-name{font-family:'Syne',sans-serif;font-weight:600;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rtn-item-meta{font-size:10px;color:var(--muted2);margin-top:2px}
+.rtn-item-name{font-family:'Syne',sans-serif;font-weight:600;font-size:11px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rtn-item-meta{font-size:10px;color:var(--muted2)}
 .week-sched{padding:7px}
 .sched-row{display:flex;align-items:center;gap:5px;padding:4px;border-radius:6px;border:1px solid var(--border);margin-bottom:3px;background:var(--card2)}
 .sched-day-lbl{font-family:'Syne',sans-serif;font-weight:800;font-size:10px;width:24px;flex-shrink:0;color:var(--accent)}
 .sched-sel{flex:1;background:var(--card);border:1px solid var(--border);color:var(--text);padding:3px 4px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px;outline:none}
 .sched-done-icon{font-size:13px;flex-shrink:0;width:18px;text-align:center}
-.trn-main{display:flex;flex-direction:column;gap:10px}
-/* ── WEEK BAR ── */
-.trn-week-bar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.twd{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 4px;text-align:center;cursor:pointer;transition:all .15s;position:relative}
-.twd:hover:not(.rest){border-color:var(--accent2);background:var(--card2)}
-.twd.done{background:rgba(194,242,79,.04);border-color:rgba(194,242,79,.3)}
-.twd.today{border-color:var(--accent2)}
-.twd.rest{opacity:.3;cursor:default}
-.twd.selected{border-color:var(--accent)!important;background:rgba(194,242,79,.07)!important;box-shadow:0 0 0 1px rgba(194,242,79,.2)}
-.twd-day{font-family:'Syne',sans-serif;font-weight:800;font-size:10px;color:var(--muted2);letter-spacing:.5px}
-.twd-icon{font-size:16px;margin:2px 0}
-.twd-rtn{font-size:9px;font-family:'Syne',sans-serif;font-weight:600;color:var(--muted2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;margin-top:1px}
-.twd.selected .twd-day,.twd.selected .twd-rtn{color:var(--accent)}
-/* ── WORKOUT VIEW (Hevy-style) ── */
+.trn-main{display:flex;flex-direction:column;gap:11px}
 .trn-empty{background:var(--card);border:1px solid var(--border);border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;color:var(--muted2);gap:8px;font-family:'Syne',sans-serif;padding:20px;text-align:center}
-.workout-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.workout-head{padding:12px 16px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.workout-title{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;flex:1;min-width:120px}
-.workout-subtitle{font-size:10px;color:var(--muted2);font-family:'JetBrains Mono',monospace}
-.workout-done-btn{background:var(--accent);color:#08090a;border:none;padding:7px 14px;border-radius:6px;font-family:'Syne',sans-serif;font-weight:800;font-size:11px;cursor:pointer;transition:all .15s;white-space:nowrap}
-.workout-done-btn.undone{background:var(--card2);color:var(--muted2);border:1px solid var(--border)}
-.workout-done-btn:hover{opacity:.85}
-.workout-done-banner{background:rgba(194,242,79,.06);border-bottom:1px solid rgba(194,242,79,.12);padding:6px 16px;font-family:'Syne',sans-serif;font-weight:700;font-size:11px;color:var(--accent)}
-/* ── EXERCISE BLOCK ── */
-.ex-block{border-bottom:1px solid var(--border)}
-.ex-block:last-of-type{border-bottom:none}
-.ex-block-head{display:flex;align-items:center;gap:8px;padding:10px 16px 5px}
-.ex-block-name{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ex-block-name-inp{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;flex:1;background:transparent;border:none;border-bottom:1px dotted var(--border);color:var(--text);outline:none;min-width:0}
-.ex-block-name-inp:focus{border-bottom-color:var(--accent)}
-.ex-note{padding:0 16px 6px;font-size:11px;color:var(--muted2);font-style:italic;font-family:'JetBrains Mono',monospace}
-.ex-note-inp{width:100%;padding:0 16px 7px;background:transparent;border:none;color:var(--muted2);font-size:11px;font-style:italic;font-family:'JetBrains Mono',monospace;outline:none}
-/* ── SETS TABLE ── */
-.sets-table{padding:0 16px 10px}
-.sets-hdr{display:grid;grid-template-columns:28px 60px 60px 48px 42px;gap:6px;padding:4px 0 5px;border-bottom:1px solid var(--border);margin-bottom:4px}
-.sets-hdr span{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted2);text-align:center}
-.sets-hdr span:first-child{text-align:left}
-.set-row{display:grid;grid-template-columns:28px 60px 60px 48px 42px;gap:6px;align-items:center;padding:4px 0;border-bottom:1px dotted rgba(255,255,255,.03)}
-.set-row:last-child{border-bottom:none}
-.set-row.set-done{background:rgba(194,242,79,.03)}
-.set-num{font-family:'Syne',sans-serif;font-weight:800;font-size:11px;color:var(--muted2);text-align:center}
-.set-inp{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:6px 4px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:13px;text-align:center;outline:none;width:100%;transition:all .15s}
-.set-inp:focus{border-color:var(--accent);background:rgba(194,242,79,.04)}
-.set-inp.done-val{border-color:rgba(194,242,79,.4);background:rgba(194,242,79,.05);color:var(--accent)}
-.set-inp::placeholder{color:var(--muted);font-size:10px}
-.set-check-btn{width:36px;height:32px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--muted2);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;padding:0}
-.set-check-btn:hover{border-color:var(--accent);color:var(--accent)}
-.set-check-btn.checked{background:var(--accent);border-color:var(--accent);color:#08090a}
-.set-del-btn{width:24px;height:24px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;border-radius:4px;transition:color .15s;padding:0}
-.set-del-btn:hover{color:var(--red)}
-.add-set-btn{margin:2px 16px 10px;background:none;border:1px dashed var(--border);color:var(--muted);padding:5px;border-radius:5px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;width:calc(100% - 32px);transition:all .15s}
-.add-set-btn:hover{border-color:var(--accent);color:var(--accent)}
-/* ── RPE ── */
-.rpe-row{display:flex;align-items:center;gap:3px;padding:0 16px 10px;flex-wrap:wrap}
-.rpe-lbl{font-size:10px;color:var(--muted2);margin-right:3px}
-.rpebtn{width:24px;height:24px;border-radius:4px;border:1px solid var(--border);background:var(--card2);color:var(--muted2);cursor:pointer;font-size:10px;font-weight:700;font-family:'Syne',sans-serif;padding:0;transition:all .12s}
-.rpebtn.on{background:var(--accent3);color:#08090a;border-color:var(--accent3)}
-/* ── REST TIMER ── */
-.rest-timer{display:none;position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--accent2);border-radius:12px;padding:12px 18px;z-index:500;font-family:'Syne',sans-serif;box-shadow:0 8px 32px rgba(0,0,0,.4);min-width:160px;text-align:center}
-.rest-timer.visible{display:block}
-.rest-timer-label{font-size:10px;color:var(--accent2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
-.rest-timer-time{font-size:28px;font-weight:800;color:var(--text);line-height:1}
-.rest-timer-skip{font-size:10px;color:var(--muted2);cursor:pointer;margin-top:6px;display:block}
-.rest-timer-skip:hover{color:var(--text)}
-/* ── MUSCLE CHIPS ── */
-.muscle-chips{display:flex;gap:4px;flex-wrap:wrap;padding:8px 16px 10px;border-bottom:1px solid var(--border)}
+.rtn-editor{background:var(--card);border:1px solid var(--border);border-radius:9px;overflow:hidden}
+.rtn-editor-head{padding:10px 14px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rtn-name-inp{flex:1;min-width:100px;background:transparent;border:none;color:var(--text);font-family:'Syne',sans-serif;font-weight:800;font-size:14px;outline:none;border-bottom:1px dotted var(--border);padding:1px 3px}
+.rtn-name-inp:focus{border-bottom-color:var(--accent)}
+.muscle-chips{display:flex;gap:4px;flex-wrap:wrap;padding:8px 14px;border-bottom:1px solid var(--border)}
 .mchip{font-size:10px;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;border:1px solid var(--border);background:var(--card2);color:var(--muted2);transition:all .12s}
 .mchip.on{background:var(--accent);color:#08090a;border-color:var(--accent)}
-/* ── WORKOUT ACTIONS ── */
-.workout-actions{padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:6px;flex-wrap:wrap}
-/* ── STATS ── */
+.exblock{border-bottom:1px solid var(--border)}
+.exblock:last-child{border-bottom:none}
+.exblock-head{display:flex;align-items:center;gap:7px;padding:8px 14px;background:rgba(255,255,255,.01)}
+.ex-name-inp{flex:1;background:transparent;border:none;color:var(--text);font-family:'Syne',sans-serif;font-weight:700;font-size:13px;outline:none;border-bottom:1px dotted var(--border);padding:1px 3px;min-width:0}
+.ex-name-inp:focus{border-bottom-color:var(--accent)}
+.ex-note-inp{width:100%;background:transparent;border:none;color:var(--muted2);font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;padding:2px 14px 6px;font-style:italic}
+.ex-note-inp::placeholder{color:var(--muted)}
+.gif-btn{background:none;border:1px solid var(--border2);color:var(--accent2);padding:3px 7px;border-radius:4px;font-family:'Syne',sans-serif;font-weight:700;font-size:9px;cursor:pointer;transition:all .12s;flex-shrink:0}
+.gif-btn:hover{border-color:var(--accent2);background:rgba(79,242,194,.08)}
+.exsets{padding:5px 14px 7px}
+.sets-hdr{display:grid;grid-template-columns:22px 1fr 1fr 1fr 44px 20px;gap:4px;padding:3px 0 4px;border-bottom:1px solid var(--border);margin-bottom:3px}
+.sets-hdr span{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted2);text-align:center}
+.sets-hdr span:first-child{text-align:left}
+.set-row{display:grid;grid-template-columns:22px 1fr 1fr 1fr 44px 20px;gap:4px;align-items:center;padding:3px 0;border-bottom:1px dotted var(--card2)}
+.set-row:last-child{border-bottom:none}
+.set-num{font-family:'Syne',sans-serif;font-weight:800;font-size:11px;color:var(--muted2);text-align:center}
+.set-inp{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:5px 3px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px;text-align:center;outline:none;width:100%;transition:border-color .15s}
+.set-inp:focus{border-color:var(--accent)}
+.set-inp.done-val{border-color:var(--accent);background:rgba(194,242,79,.05)}
+.set-inp.struct-readonly{pointer-events:none;background:transparent;border-color:transparent;color:var(--muted2);font-size:11px}
+.set-cb{width:16px;height:16px;cursor:pointer;accent-color:var(--accent);flex-shrink:0}
+.set-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:0;line-height:1;text-align:center}
+.set-del:hover{color:var(--red)}
+.add-set-btn{margin:5px 14px 7px;background:none;border:1px dashed var(--border);color:var(--muted);padding:4px;border-radius:5px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;width:calc(100% - 28px);transition:all .15s}
+.add-set-btn:hover{border-color:var(--accent);color:var(--accent)}
+.rpe-row{display:flex;align-items:center;gap:3px;padding:2px 14px 8px;flex-wrap:wrap}
+.rpe-lbl{font-size:10px;color:var(--muted2)}
+.rpebtn{width:22px;height:22px;border-radius:4px;border:1px solid var(--border);background:var(--card2);color:var(--muted2);cursor:pointer;font-size:10px;font-weight:700;font-family:'Syne',sans-serif;transition:all .12px;padding:0}
+.rpebtn.on{background:var(--accent3);color:#08090a;border-color:var(--accent3)}
+.rpebtn:hover:not(.on){border-color:var(--accent3);color:var(--accent3)}
+.trn-week-bar{display:flex;gap:4px;flex-wrap:wrap}
+.twd{flex:1;min-width:52px;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:7px 5px;text-align:center;cursor:pointer;transition:all .15s}
+.twd:hover:not(.rest){border-color:var(--accent2)}
+.twd.done{background:rgba(194,242,79,.05);border-color:var(--accent)}
+.twd.today{border-color:var(--accent2)}
+.twd.rest{opacity:.35;cursor:default}
+.twd-day{font-family:'Syne',sans-serif;font-weight:800;font-size:9px;color:var(--muted2);letter-spacing:.5px}
+.twd-rtn{font-size:10px;font-family:'Syne',sans-serif;font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.twd-icon{font-size:15px;margin-bottom:1px}
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 @media(max-width:600px){.stats-grid{grid-template-columns:1fr}}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:11px}
@@ -397,30 +362,9 @@ td select{background:var(--card2);color:var(--text);border:1px solid var(--borde
 .stat-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--card2);font-size:11px}
 .stat-row:last-child{border-bottom:none}
 .stat-row .sv{font-family:'Syne',sans-serif;font-weight:700;color:var(--accent)}
+.vol-bar-wrap{flex:1;height:3px;background:var(--border);border-radius:2px;margin:0 7px}
+.vol-bar{height:3px;border-radius:2px;background:var(--accent2);transition:width .4s}
 .prog-up{color:var(--accent)}.prog-dn{color:var(--red)}.prog-eq{color:var(--muted2)}
-/* ── PROGRESS MODULE ── */
-.prog-summary{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:12px}
-.prog-kpi{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center}
-.prog-kpi-val{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--accent);line-height:1}
-.prog-kpi-lbl{font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.7px;margin-top:4px}
-.prog-ex-card{background:var(--card);border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:10px}
-.prog-ex-head{padding:9px 14px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
-.prog-ex-name{font-family:'Syne',sans-serif;font-weight:700;font-size:12px}
-.prog-ex-badges{display:flex;gap:5px}
-.prog-badge{font-size:9px;padding:2px 7px;border-radius:4px;font-family:'Syne',sans-serif;font-weight:700}
-.prog-badge.best{background:rgba(194,242,79,.12);color:var(--accent);border:1px solid rgba(194,242,79,.2)}
-.prog-badge.vol{background:rgba(79,242,194,.08);color:var(--accent2);border:1px solid rgba(79,242,194,.15)}
-.prog-chart-wrap{padding:10px 14px 6px;overflow-x:auto}
-.prog-history{padding:0 14px 10px;font-size:10px}
-.prog-hist-row{display:flex;gap:7px;align-items:baseline;padding:3px 0;border-bottom:1px dotted var(--card2);flex-wrap:wrap}
-.prog-hist-row:last-child{border-bottom:none}
-.prog-hist-week{color:var(--muted2);flex-shrink:0;width:65px}
-.prog-hist-sets{flex:1;color:var(--muted2)}
-.prog-hist-max{font-family:'Syne',sans-serif;font-weight:700;color:var(--text);white-space:nowrap}
-.rtn-name-inp{flex:1;min-width:100px;background:transparent;border:none;color:var(--text);font-family:'Syne',sans-serif;font-weight:800;font-size:14px;outline:none;border-bottom:1px dotted var(--border);padding:1px 3px}
-.rtn-name-inp:focus{border-bottom-color:var(--accent)}
-.set-inp.struct-readonly{pointer-events:none;background:transparent;border-color:transparent;color:var(--muted2);font-size:11px}
-
 
 /* ── GIF EXERCISE LIBRARY (coach panel) ── */
 .ex-library{display:grid;grid-template-columns:320px 1fr;gap:12px;align-items:start}
@@ -782,24 +726,14 @@ textarea{width:100%;background:transparent;border:none;color:var(--text);font-fa
 
     <!-- Coach-only: GIF Library (hidden from clients) -->
     <div class="nav-item coach-only-nav" id="nav-giflib" data-tab="ejercicios" style="display:none" onclick="navItemClick(this,event)"><span class="nav-icon">🎬</span>Librería GIFs</div>
-    <!-- Coach-only: Ajustes -->
-    <div class="nav-item coach-only-nav" id="nav-ajustes" data-tab="ajustes" style="display:none" onclick="navItemClick(this,event)"><span class="nav-icon">⚙️</span>Ajustes</div>
   </nav>
 
   <div class="sb-bottom">
     <div class="sb-status">
       <div id="autosave-dot"></div>
       <div id="price-status-sidebar">💰 Precios...</div>
+      
     </div>
-    <button id="theme-toggle" onclick="toggleTheme()" style="
-      width:100%;background:none;border:1px solid var(--border);border-radius:7px;
-      color:var(--muted2);padding:7px 12px;cursor:pointer;font-family:'Syne',sans-serif;
-      font-weight:700;font-size:11px;display:flex;align-items:center;gap:8px;
-      margin-bottom:6px;transition:all .15s;
-    " onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'"
-       onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted2)'">
-      <span id="theme-icon">☀️</span><span id="theme-label">Modo día</span>
-    </button>
     
     <div class="sb-user" onclick="confirmLogout()">
       <div class="sb-avatar" id="sb-avatar">?</div>
@@ -1006,60 +940,32 @@ textarea{width:100%;background:transparent;border:none;color:var(--text);font-fa
   <!-- ENTRENO -->
   <div id="panel-entreno" class="panel">
     <div class="trn-layout">
-      <!-- SIDEBAR -->
       <div>
         <div class="trn-sidebar">
           <div class="trn-sidebar-head">
-            <span>Entrenamiento</span>
+            <span>Entrenamientos</span>
             <button class="btn sm" id="new-routine-btn" onclick="newRoutine()">+ Nueva</button>
           </div>
           <div class="trn-tabs">
-            <button class="trn-tab active" id="trnTab-week" onclick="switchTrnTab('week')">Semana</button>
-            <button class="trn-tab"        id="trnTab-program" onclick="switchTrnTab('program')">Programa</button>
-            <button class="trn-tab"        id="trnTab-progress" onclick="switchTrnTab('progress')">Progreso</button>
+            <button class="trn-tab active" id="trnTab-routines" onclick="switchTrnTab('routines')">Rutinas</button>
+            <button class="trn-tab" id="trnTab-schedule" onclick="switchTrnTab('schedule')">Semana</button>
           </div>
-          <!-- SEMANA pane: list of days with routine names -->
-          <div id="trn-week-pane" class="week-sched" style="display:block"></div>
-          <!-- PROGRAMA pane: routine list + schedule assignment -->
-          <div id="trn-program-pane" style="display:none">
-            <div class="rtn-list" id="trn-routines-pane"></div>
-            <div style="padding:7px;border-top:1px solid var(--border)">
-              <div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Asignar a días</div>
-              <div id="trn-schedule-pane"></div>
-            </div>
-          </div>
-          <!-- PROGRESO pane: filter -->
-          <div id="trn-progress-pane" style="display:none;padding:8px 10px">
-            <div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Ejercicio</div>
-            <select id="prog-ex-sel" style="width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:5px 7px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;margin-bottom:10px" onchange="renderTrnProgress()">
-              <option value="">— Todos —</option>
-            </select>
-            <div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Semanas</div>
-            <div id="prog-weeks-list" style="font-size:10px;color:var(--muted2);line-height:1.9"></div>
-          </div>
+          <div id="trn-routines-pane" class="rtn-list"></div>
+          <div id="trn-schedule-pane" class="week-sched" style="display:none"></div>
         </div>
       </div>
-      <!-- MAIN AREA -->
       <div class="trn-main">
         <div class="trn-week-bar" id="trn-week-bar"></div>
         <div id="trn-editor-area">
-          <div class="trn-empty"><div style="font-size:36px">💪</div><div>Selecciona un día</div></div>
+          <div class="trn-empty"><div style="font-size:36px">💪</div><div>Selecciona una rutina</div></div>
         </div>
-        <div id="trn-stats-area" style="display:none;margin-top:4px">
-          <div class="sec" style="margin-top:0">📊 Semana actual</div>
+        <div id="trn-stats-area" style="display:none">
+          <div class="sec" style="margin-top:4px">📊 Estadísticas semana</div>
           <div class="stats-grid" id="trn-stats-grid"></div>
         </div>
-        <div id="trn-progress-area" style="display:none"></div>
       </div>
     </div>
   </div>
-  <!-- REST TIMER -->
-  <div id="rest-timer" class="rest-timer">
-    <div class="rest-timer-label">⏱ Descanso</div>
-    <div class="rest-timer-time" id="rest-timer-time">1:30</div>
-    <span class="rest-timer-skip" onclick="stopRestTimer()">Saltar →</span>
-  </div>
-
 
   <!-- PROGRESO moved to panel-perfil -->
   <div id="panel-progreso" class="panel" style="display:none!important"></div>
@@ -1308,133 +1214,6 @@ textarea{width:100%;background:transparent;border:none;color:var(--text);font-fa
     </div>
   </div>
 
-  <!-- AJUSTES (coach only) -->
-  <div id="panel-ajustes" class="panel">
-    <div style="max-width:680px;display:flex;flex-direction:column;gap:14px">
-
-      <!-- API Keys card -->
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;overflow:hidden">
-        <div style="padding:12px 16px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
-          <span style="font-size:16px">🔑</span>
-          <div>
-            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:13px">API Keys</div>
-            <div style="font-size:10px;color:var(--muted2)">Se guardan cifradas en Supabase. Solo el entrenador puede verlas.</div>
-          </div>
-        </div>
-        <div style="padding:16px;display:flex;flex-direction:column;gap:16px">
-
-          <!-- Supabase Service Role Key -->
-          <div>
-            <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
-              <span style="font-size:14px">🗄</span>
-              <div style="flex:1">
-                <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:12px">Supabase Service Role Key</div>
-                <div style="font-size:10px;color:var(--muted2)">Para crear cuentas de clientes. Supabase → Settings → API → <code style="background:var(--card2);padding:1px 4px;border-radius:3px">service_role</code></div>
-              </div>
-              <div id="sb-key-status" style="font-size:10px;font-family:'Syne',sans-serif;font-weight:700;color:var(--muted2);white-space:nowrap">—</div>
-            </div>
-            <div style="display:flex;gap:6px;align-items:center">
-              <input id="inp-sb-service-key" type="password" placeholder="eyJhbGci..." autocomplete="new-password"
-                style="flex:1;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;transition:border-color .15s"
-                onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
-              <button class="btn ghost sm" onclick="toggleKeyVisibility('inp-sb-service-key')" title="Mostrar/ocultar" style="flex-shrink:0">👁</button>
-              <button class="btn sm" onclick="saveApiKey('supabase_service_key','inp-sb-service-key','sb-key-status')" style="flex-shrink:0">💾 Guardar</button>
-            </div>
-            <div style="margin-top:5px;display:flex;gap:5px;align-items:center">
-              <button class="btn ghost sm" onclick="editApiKey('inp-sb-service-key','supabase_service_key')" id="btn-edit-sb" style="display:none;font-size:10px">✏ Modificar clave actual</button>
-              <button class="btn danger sm" onclick="deleteApiKey('supabase_service_key','sb-key-status','btn-edit-sb','inp-sb-service-key')" id="btn-del-sb" style="display:none;font-size:10px">🗑 Borrar</button>
-            </div>
-          </div>
-
-          <div style="height:1px;background:var(--border)"></div>
-
-          <!-- Claude / Anthropic API Key -->
-          <div>
-            <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
-              <span style="font-size:14px">🤖</span>
-              <div style="flex:1">
-                <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:12px">Claude API Key (Anthropic)</div>
-                <div style="font-size:10px;color:var(--muted2)">Para actualizar precios con IA. <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--accent2);text-decoration:none">console.anthropic.com → API Keys</a></div>
-              </div>
-              <div id="claude-key-status" style="font-size:10px;font-family:'Syne',sans-serif;font-weight:700;color:var(--muted2);white-space:nowrap">—</div>
-            </div>
-            <div style="display:flex;gap:6px;align-items:center">
-              <input id="inp-claude-key" type="password" placeholder="sk-ant-api03-..." autocomplete="new-password"
-                style="flex:1;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;transition:border-color .15s"
-                onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
-              <button class="btn ghost sm" onclick="toggleKeyVisibility('inp-claude-key')" title="Mostrar/ocultar" style="flex-shrink:0">👁</button>
-              <button class="btn sm" onclick="saveApiKey('anthropic_key','inp-claude-key','claude-key-status')" style="flex-shrink:0">💾 Guardar</button>
-            </div>
-            <div style="margin-top:5px;display:flex;gap:5px;align-items:center">
-              <button class="btn ghost sm" onclick="editApiKey('inp-claude-key','anthropic_key')" id="btn-edit-claude" style="display:none;font-size:10px">✏ Modificar clave actual</button>
-              <button class="btn danger sm" onclick="deleteApiKey('anthropic_key','claude-key-status','btn-edit-claude','inp-claude-key')" id="btn-del-claude" style="display:none;font-size:10px">🗑 Borrar</button>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Gestión de clientes card -->
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;overflow:hidden">
-        <div style="padding:12px 16px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
-          <span style="font-size:16px">👥</span>
-          <div>
-            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:13px">Gestión de clientes</div>
-            <div style="font-size:10px;color:var(--muted2)">Crea cuentas para tus clientes. Necesitas la Supabase Service Role Key.</div>
-          </div>
-        </div>
-        <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div>
-              <div style="font-size:10px;color:var(--muted2);margin-bottom:4px;font-family:'Syne',sans-serif;font-weight:700">Nombre completo</div>
-              <input id="new-client-name" type="text" placeholder="Ana García"
-                style="width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;outline:none">
-            </div>
-            <div>
-              <div style="font-size:10px;color:var(--muted2);margin-bottom:4px;font-family:'Syne',sans-serif;font-weight:700">Email</div>
-              <input id="new-client-email" type="email" placeholder="ana@email.com"
-                style="width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;outline:none">
-            </div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div>
-              <div style="font-size:10px;color:var(--muted2);margin-bottom:4px;font-family:'Syne',sans-serif;font-weight:700">Contraseña temporal</div>
-              <input id="new-client-pass" type="text" placeholder="Mín. 8 caracteres"
-                style="width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;outline:none">
-            </div>
-            <div style="display:flex;align-items:flex-end">
-              <button class="btn" style="width:100%;justify-content:center" onclick="createClientAccount()">➕ Crear cliente</button>
-            </div>
-          </div>
-          <div id="create-client-log" style="font-size:11px;color:var(--muted2);font-family:'JetBrains Mono',monospace;min-height:18px"></div>
-        </div>
-      </div>
-
-      <!-- Precios IA card -->
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;overflow:hidden">
-        <div style="padding:12px 16px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
-          <span style="font-size:16px">💰</span>
-          <div style="flex:1">
-            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:13px">Actualización de precios con IA</div>
-            <div style="font-size:10px;color:var(--muted2)">Claude estima precios de todos los ingredientes. Se comparte con todos los clientes.</div>
-          </div>
-          <div id="price-update-status" style="font-size:10px;color:var(--muted2);font-family:'JetBrains Mono',monospace;text-align:right"></div>
-        </div>
-        <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <button class="btn teal" onclick="runAiPriceUpdate()" id="btn-ai-prices" style="gap:6px">
-              🤖 Actualizar precios ahora
-            </button>
-            <button class="btn ghost sm" onclick="fetchMercadonaPrices()">🏪 Solo Mercadona</button>
-            <div id="ai-price-progress" style="font-size:10px;color:var(--muted2);font-family:'JetBrains Mono',monospace"></div>
-          </div>
-          <div id="ai-price-log" style="font-size:10px;color:var(--muted2);font-family:'JetBrains Mono',monospace;max-height:120px;overflow-y:auto;background:var(--card2);border-radius:5px;padding:7px;display:none"></div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
 </div><!-- /app-main -->
 
 <script type="module">
@@ -1532,7 +1311,6 @@ let CHECKED  = {};
 let ROUTINES = [];
 let SCHEDULE = {};
 let TRN_LOG  = {};
-let TRN_LOG_HISTORY = {};  // all weeks keyed by week_key
 let EX_LIBRARY = [];
 let personalNotes = '';
 let coachFeedback = '';
@@ -1542,9 +1320,8 @@ const THIS_WEEK = weekKey();
 let currentSuperTab = 'all';
 let currentRecipeId = null;
 let currentRtnId    = null;
-let currentDay      = null;  // day label selected in week bar (LUN,MAR...)
 let currentExId     = null;
-let trnTabMode      = 'week';
+let trnTabMode      = 'routines';
 
 const MEAL_LABELS  = {desayuno:'🌅 Desayuno',comida:'🍽 Comida',preEntreno:'⚡ Pre-entreno',cena:'🌙 Cena',preCama:'🛌 Pre-cama'};
 const MEALS_ORDER  = ['desayuno','comida','preEntreno','cena','preCama'];
@@ -1705,12 +1482,6 @@ async function boot() {
       document.getElementById('new-routine-btn').style.display = 'none';
       document.querySelector('.client-feedback-area').style.display = 'block';
       loadPublishedFeedback();
-      // Auto-select today for client
-      const todayLabel = getTodayLabel();
-      if (todayLabel && SCHEDULE[todayLabel]) {
-        currentDay = todayLabel;
-        currentRtnId = SCHEDULE[todayLabel] || null;
-      }
     }
 
     // Non-critical loads
@@ -1732,11 +1503,7 @@ async function boot() {
     document.getElementById('app-loading').classList.add('hidden');
     // GIF Library only visible to coaches
     const gifNav = document.getElementById('nav-giflib');
-    const ajNav  = document.getElementById('nav-ajustes');
-    const isCoach = currentProfile?.role === 'coach';
-    if(gifNav) gifNav.style.display = isCoach ? 'flex' : 'none';
-    if(ajNav)  ajNav.style.display  = isCoach ? 'flex' : 'none';
-    if(isCoach) loadApiKeys();
+    if(gifNav) gifNav.style.display = (currentProfile?.role==='coach') ? 'flex' : 'none';
     renderResumen();
   }
 }
@@ -1807,52 +1574,36 @@ async function loadClientData(clientId) {
   currentClientId = clientId;
   const coachId = currentProfile.role === 'coach' ? currentUser.id : currentProfile.coach_id;
 
-  const [dietRes, routinesRes, schedRes, logRes, stockRes, notesRes, allLogsRes] = await Promise.all([
+  const [dietRes, routinesRes, schedRes, logRes, stockRes, notesRes] = await Promise.all([
     sb.from('client_diets').select('*').eq('client_id', clientId).maybeSingle(),
-    sb.from('routines').select('*').eq('client_id', clientId).order('name'),
+    sb.from('routines').select('*').eq('client_id', clientId),
     sb.from('week_schedules').select('*').eq('client_id', clientId).maybeSingle(),
     sb.from('training_logs').select('*').eq('client_id', clientId).eq('week_key', THIS_WEEK),
     sb.from('client_stock').select('*').eq('client_id', clientId).maybeSingle(),
     sb.from('client_notes').select('*').eq('client_id', clientId).maybeSingle(),
-    sb.from('training_logs').select('week_key,routine_id,exercises,completed').eq('client_id', clientId).order('week_key', {ascending: true}).limit(500),
   ]);
 
   DIET     = dietRes.data?.diet_json || getDefaultDiet();
   ROUTINES = (routinesRes.data||[]).map(r => ({...r, exercises: r.exercises || [], muscles: r.muscles || []}));
-  console.log('[DEBUG] Routines loaded from DB:', ROUTINES.length, 'role:', currentProfile.role);
-  // Parse schedule — may contain embedded snapshots: {LUN: {rid, snapshot}, ...} or legacy strings
-  const rawSched = schedRes.data?.schedule || {};
-  SCHEDULE = {};
-  const _snapshotRoutines = {}; // id -> routine, rebuilt from snapshots
-  Object.entries(rawSched).forEach(([day, val]) => {
-    if (typeof val === 'string') {
-      SCHEDULE[day] = val; // legacy: plain routine id
-    } else if (val && typeof val === 'object' && val.rid) {
-      SCHEDULE[day] = val.rid; // new format: extract rid
-      if (val.snapshot) _snapshotRoutines[val.snapshot.id] = { ...val.snapshot, exercises: val.snapshot.exercises||[], muscles: val.snapshot.muscles||[] };
+  SCHEDULE = schedRes.data?.schedule || {};
+  // Sanitize schedule: remove entries where value is a day label or empty (corrupted data)
+  const _dayLabels = new Set(['LUN','MAR','MIE','JUE','VIE','SAB','DOM']);
+  Object.keys(SCHEDULE).forEach(day => {
+    const rid = SCHEDULE[day];
+    if (!rid || _dayLabels.has(rid)) {
+      console.warn('Schedule corrupto para', day, '→', rid, '— limpiando');
+      delete SCHEDULE[day];
     }
   });
-  // If client has 0 routines from DB, rebuild from snapshots embedded in schedule
-  if (ROUTINES.length === 0 && Object.keys(_snapshotRoutines).length > 0) {
-    ROUTINES = Object.values(_snapshotRoutines);
-    console.log('[DEBUG] Rebuilt', ROUTINES.length, 'routines from schedule snapshots');
-  }
-  console.log('[DEBUG] Schedule:', Object.keys(SCHEDULE).length, 'days. Routines:', ROUTINES.length);
   STOCK    = stockRes.data?.stock_json || {};
   personalNotes   = notesRes.data?.personal_notes || '';
   coachFeedback   = notesRes.data?.coach_feedback  || '';
   publishedFeedback = notesRes.data?.coach_feedback || '';
 
   TRN_LOG = {};
-  TRN_LOG_HISTORY = {};
   if (!TRN_LOG[THIS_WEEK]) TRN_LOG[THIS_WEEK] = {};
   (logRes.data||[]).forEach(row => {
     TRN_LOG[THIS_WEEK][row.routine_id] = { done: row.completed, exercises: row.exercises || {} };
-  });
-  // Build full history for progress charts
-  (allLogsRes.data||[]).forEach(row => {
-    if (!TRN_LOG_HISTORY[row.week_key]) TRN_LOG_HISTORY[row.week_key] = {};
-    TRN_LOG_HISTORY[row.week_key][row.routine_id] = { done: row.completed, exercises: row.exercises || {} };
   });
 
   DB = getDefaultDB();
@@ -1981,7 +1732,6 @@ async function saveDBToServer() {
 async function saveRoutinesToServer() {
   if (!currentClientId) return;
   const coachId = currentProfile.role === 'coach' ? currentUser.id : currentProfile.coach_id;
-  // Save routines table (coach access)
   const rows = ROUTINES.map(r => ({
     id: r.id, client_id: currentClientId, coach_id: coachId,
     name: r.name, muscles: r.muscles, exercises: r.exercises,
@@ -1991,39 +1741,34 @@ async function saveRoutinesToServer() {
     const { error: rErr } = await sb.from('routines').upsert(rows, { onConflict: 'id', ignoreDuplicates: false });
     if (rErr) console.warn('routines upsert:', rErr.message);
   }
-  // Build schedule with embedded routine snapshots so client can read without routines RLS
-  const schedWithSnapshots = {};
-  Object.entries(SCHEDULE).forEach(([day, val]) => {
-    const rid = typeof val === 'object' ? val.rid : val;
-    if (!rid) return;
-    const r = getRtn(rid);
-    schedWithSnapshots[day] = r
-      ? { rid, snapshot: { id: r.id, name: r.name, muscles: r.muscles||[], exercises: r.exercises||[] } }
-      : { rid };
-  });
   const { error: sErr } = await sb.from('week_schedules').upsert({
     client_id: currentClientId, coach_id: coachId,
-    schedule: schedWithSnapshots, updated_at: new Date().toISOString()
+    schedule: SCHEDULE, updated_at: new Date().toISOString()
   }, { onConflict: 'client_id' });
   if (sErr) console.warn('week_schedules upsert:', sErr.message);
   flash();
 }
 
-async function saveTrainingLog(day) {
-  // day = 'LUN','MAR'... stored in routine_id column so each day is independent
+async function saveTrainingLog(routineId) {
   if (!currentClientId) return;
-  const log = (TRN_LOG[THIS_WEEK]||{})[day] || {};
+  // Validate routineId looks like a UUID before hitting Supabase
+  const _uuidLike = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!routineId || !_uuidLike.test(routineId)) {
+    console.warn('saveTrainingLog: routineId inválido, ignorando:', routineId);
+    return;
+  }
+  const log = (TRN_LOG[THIS_WEEK]||{})[routineId] || {};
   const { error } = await sb.from('training_logs').upsert({
-    client_id: currentClientId, routine_id: day, week_key: THIS_WEEK,
+    client_id: currentClientId, routine_id: routineId, week_key: THIS_WEEK,
     exercises: log.exercises || {}, completed: log.done || false,
     logged_at: new Date().toISOString()
   }, { onConflict: 'client_id,routine_id,week_key' });
   if (error) {
     console.error('saveTrainingLog error:', error.message, error.code);
     if (error.code === '42501') {
-      toast('⚠ Sin permisos. Ejecuta el SQL de RLS en Supabase.');
+      toast('⚠ Sin permisos para guardar. Ejecuta el SQL de migración en Supabase.');
     } else {
-      toast('⚠ Error guardando: ' + error.message);
+      toast('⚠ Error guardando entreno: ' + error.message);
     }
     return;
   }
@@ -2869,835 +2614,131 @@ window.closeGifModal = () => {
 };
 
 // ══════════════════════════════════════════════════════
-//  TRAINING MODULE — Hevy-style
+//  TRAINING MODULE
 // ══════════════════════════════════════════════════════
-// ══════════════════════════════════════════════════════
-//  TRAINING MODULE — Hevy-style
-// ══════════════════════════════════════════════════════
-const DAY_NAMES = {LUN:'Lunes',MAR:'Martes',MIE:'Miércoles',JUE:'Jueves',VIE:'Viernes',SAB:'Sábado',DOM:'Domingo'};
-
-function getRtn(id){
-  if(!id) return null;
-  let r = ROUTINES.find(r=>r.id===id);
-  if(r) return r;
-  // Fallback: look in schedule snapshots (for clients whose routines RLS is blocked)
-  for(const day of DAY_LABELS){
-    if(SCHEDULE[day]===id){
-      // Already in ROUTINES if snapshot was loaded — this is just a safety net
-      break;
-    }
-  }
-  return null;
-}
+function getRtn(id){return ROUTINES.find(r=>r.id===id);}
 function getTodayLabel(){const d=new Date().getDay();return DAY_LABELS[[6,0,1,2,3,4,5][d]];}
+function getWeekLog(rid){return(TRN_LOG[THIS_WEEK]&&TRN_LOG[THIS_WEEK][rid])||{done:false,exercises:{}};}
+function getPrevWeekLog(rid,exId){const keys=Object.keys(TRN_LOG).sort();const idx=keys.indexOf(THIS_WEEK);if(idx<=0)return null;const prev=TRN_LOG[keys[idx-1]]?.[rid];return prev?.exercises?.[exId]||null;}
 
-// ── Logs keyed by day label (LUN, MAR...) — never by routine id ──
-function getDayLog(day){return(TRN_LOG[THIS_WEEK]&&TRN_LOG[THIS_WEEK][day])||{done:false,exercises:{}};}
-function getWeekLog(rid){return{done:false,exercises:{}};}// kept for compat
-function getPrevLog(day,exId){
-  const histKeys=Object.keys(TRN_LOG_HISTORY||{}).sort();
-  for(let i=histKeys.length-1;i>=0;i--){
-    const e=TRN_LOG_HISTORY[histKeys[i]]?.[day]?.exercises?.[exId];
-    if(e) return e;
-  }
-  return null;
-}
-
-// ── Sidebar rendering ──
 function renderTrnSidebar(){
-  // week pane
-  const wp=document.getElementById('trn-week-pane');
-  if(wp) wp.innerHTML=DAY_LABELS.map(day=>{
-    const rid=SCHEDULE[day]||'', rtn=rid?getRtn(rid):null;
-    const log=getDayLog(day), isDone=log.done;
-    const isToday=day===getTodayLabel(), isSel=day===currentDay;
-    return`<div class="sched-row" style="${isSel?'border-color:var(--accent);background:rgba(194,242,79,.05)':''}" onclick="selectDay('${day}')">
-      <span class="sched-day-lbl">${day}</span>
-      <span style="flex:1;font-size:11px;font-family:'Syne',sans-serif;font-weight:600;${rtn?'':'color:var(--muted)'};${isToday?'color:var(--accent2)':''}">${rtn?rtn.name:'Descanso'}${isToday?' ·':''}</span>
-      <span class="sched-done-icon">${isDone?'✅':rtn?'':'😴'}</span>
-    </div>`;
-  }).join('');
-  // routines pane (program tab)
-  const rp=document.getElementById('trn-routines-pane');
-  if(rp) rp.innerHTML=ROUTINES.length===0
-    ?`<div style="padding:14px;color:var(--muted2);font-size:11px;text-align:center">${isCoachView()?'Sin rutinas. Crea una.':'Sin rutinas asignadas.'}</div>`
-    :ROUTINES.map(r=>`<div class="rtn-item ${r.id===currentRtnId?'active':''}" onclick="selectRtnProgram('${r.id}')">
-        <div class="rtn-item-name">${r.name}</div>
-        <div class="rtn-item-meta">${(r.exercises||[]).length} ejercicios · ${(r.muscles||[]).slice(0,2).join(', ')||'—'}</div>
-      </div>`).join('');
-  // schedule pane
-  renderSchedule();
+  const list=document.getElementById('trn-routines-pane');if(!list)return;
+  list.innerHTML=ROUTINES.length===0?`<div style="padding:14px;color:var(--muted2);font-size:11px;text-align:center">Sin rutinas</div>`:ROUTINES.map(r=>{const log=getWeekLog(r.id);return`<div class="rtn-item ${r.id===currentRtnId?'active':''}" onclick="selectRoutine('${r.id}')"><div><div class="rtn-item-name">${log.done?'✓ ':''}${r.name}</div><div class="rtn-item-meta">${(r.exercises||[]).length} ejercicios · ${(r.muscles||[]).slice(0,2).join(', ')||'—'}</div></div></div>`;}).join('');
 }
-
 function renderSchedule(){
-  const sp=document.getElementById('trn-schedule-pane');if(!sp)return;
-  sp.innerHTML=DAY_LABELS.map(day=>{
-    const rid=SCHEDULE[day]||'';
-    const opts=`<option value="">— Descanso —</option>`+ROUTINES.map(r=>`<option value="${r.id}" ${r.id===rid?'selected':''}>${r.name}</option>`).join('');
-    return`<div class="sched-row"><span class="sched-day-lbl">${day}</span>
-      <select class="sched-sel" onchange="setScheduleDay('${day}',this.value)" ${isCoachView()?'':'disabled'}>${opts}</select></div>`;
-  }).join('');
+  const pane=document.getElementById('trn-schedule-pane');if(!pane)return;
+  pane.innerHTML=DAY_LABELS.map(day=>{const rid=SCHEDULE[day]||'',rtn=rid?getRtn(rid):null,log=rid?getWeekLog(rid):{};const opts=`<option value="">— Descanso —</option>`+ROUTINES.map(r=>`<option value="${r.id}" ${r.id===rid?'selected':''}>${r.name}</option>`).join('');return`<div class="sched-row"><span class="sched-day-lbl">${day}</span><select class="sched-sel" onchange="setScheduleDay('${day}',this.value)" ${isCoachView()?'':'disabled'}>${opts}</select><span class="sched-done-icon">${log.done?'✅':''}</span></div>`;}).join('');
 }
-
-window.setScheduleDay=async(day,rid)=>{
-  SCHEDULE[day]=rid||'';
-  renderTrnSidebar();
-  renderTrnWeekBar();
-  if(isCoachView()) await saveRoutinesToServer();
-};
-
-window.switchTrnTab=(tab)=>{
-  trnTabMode=tab;
-  ['week','program','progress'].forEach(t=>{
-    const el=document.getElementById('trn-'+t+'-pane');
-    if(el) el.style.display=t===tab?'block':'none';
-    document.getElementById('trnTab-'+t)?.classList.toggle('active',t===tab);
-  });
-  const pa=document.getElementById('trn-progress-area');
-  const sa=document.getElementById('trn-stats-area');
-  if(pa) pa.style.display=tab==='progress'?'block':'none';
-  if(sa) sa.style.display=(tab!=='progress'&&sa.dataset.hasData==='1')?'block':'none';
-  if(tab==='progress') renderTrnProgress();
-};
-
-// ── Week bar ──
+window.setScheduleDay=async(day,rid)=>{SCHEDULE[day]=rid;renderTrnWeekBar();renderSchedule();if(isCoachView())await saveRoutinesToServer();};
+window.switchTrnTab=(tab)=>{trnTabMode=tab;document.getElementById('trn-routines-pane').style.display=tab==='routines'?'block':'none';document.getElementById('trn-schedule-pane').style.display=tab==='schedule'?'block':'none';document.querySelectorAll('.trn-tab').forEach(b=>b.classList.remove('active'));document.getElementById('trnTab-'+tab).classList.add('active');if(tab==='schedule')renderSchedule();};
 function renderTrnWeekBar(){
   const bar=document.getElementById('trn-week-bar');if(!bar)return;
   const today=getTodayLabel();
-  bar.innerHTML=DAY_LABELS.map(day=>{
-    const rid=SCHEDULE[day]||'', rtn=rid?getRtn(rid):null;
-    const log=getDayLog(day), isDone=log.done;
-    const isToday=day===today, isRest=!rid, isSel=day===currentDay;
-    const cls=['twd',isRest?'rest':'',isDone?'done':'',isToday&&!isRest?'today':'',isSel?'selected':''].filter(Boolean).join(' ');
-    const icon=isDone?'✅':isRest?'—':'🏋️';
-    return`<div class="${cls}" onclick="selectDay('${day}')">
-      <div class="twd-day">${day}</div>
-      <div class="twd-icon">${icon}</div>
-      <div class="twd-rtn">${rtn?rtn.name:'descanso'}</div>
-    </div>`;
-  }).join('');
+  bar.innerHTML=DAY_LABELS.map(day=>{const rid=SCHEDULE[day]||'',rtn=rid?getRtn(rid):null,log=rid?getWeekLog(rid):{},isDone=log.done,isToday=day===today,isRest=!rid;const cls=[isRest?'rest':'',isDone?'done':'',isToday&&!isRest?'today':''].filter(Boolean).join(' ');const icon=isDone?'✅':isRest?'😴':isToday?'🏋️':'⬜';return`<div class="twd ${cls}" onclick="${!isRest?`selectRoutine('${rid}')`:''}" title="${rtn?rtn.name:'Descanso'}"><div class="twd-icon">${icon}</div><div class="twd-day">${day}</div><div class="twd-rtn">${rtn?rtn.name:'Descanso'}</div></div>`;}).join('');
 }
+window.selectRoutine=(id)=>{currentRtnId=id;renderTrnSidebar();renderTrnEditor();renderTrnStats();};
 
-window.selectDay=(day)=>{
-  currentDay=day;
-  const rid=SCHEDULE[day]||'';
-  currentRtnId=rid||null;
-  renderTrnWeekBar();
-  renderTrnSidebar();
-  renderTrnEditor();
-};
-
-window.selectRtnProgram=(id)=>{
-  currentRtnId=id;
-  renderTrnSidebar();
-  renderRtnEditor();
-};
-
-// ── WORKOUT EDITOR (day view — what client uses) ──
 function renderTrnEditor(){
   const area=document.getElementById('trn-editor-area');if(!area)return;
-  const day=currentDay;
-  if(!day){area.innerHTML=`<div class="trn-empty"><div style="font-size:36px">📅</div><div>Selecciona un día</div></div>`;return;}
-  const rid=SCHEDULE[day]||'';
-  if(!rid){
-    area.innerHTML=`<div class="trn-empty"><div style="font-size:36px">😴</div><div style="font-family:'Syne',sans-serif;font-weight:700">${DAY_NAMES[day]}</div><div>Día de descanso</div>${isCoachView()?`<div style="font-size:11px;margin-top:6px"><button class="btn ghost sm" onclick="switchTrnTab('program')">Asignar rutina</button></div>`:''}</div>`;
-    return;
-  }
-  const r=getRtn(rid);
-  if(!r){
-    area.innerHTML=`<div class="trn-empty"><div style="font-size:36px">⚠</div><div>Rutina no encontrada</div><div style="font-size:11px;color:var(--muted2)">ID: ${rid}</div><div style="font-size:11px;color:var(--red);margin-top:8px">Ejecuta el SQL de permisos en Supabase.<br>Ver archivo supabase_rls_fix.sql</div></div>`;
-    return;
-  }
-  const log=getDayLog(day);
+  if(!currentRtnId){area.innerHTML=`<div class="trn-empty"><div style="font-size:36px">💪</div><div>Selecciona una rutina</div></div>`;return;}
+  const r=getRtn(currentRtnId);if(!r){area.innerHTML='';return;}
+  const log=getWeekLog(r.id);
   const coach=isCoachView();
+  // Coach can log their own workouts (when viewing self)
+  const selfTraining = isCoachView() && currentClientId === currentUser.id;
+  const canLog = true; // both coach and clients can always log
+  const muscleChips=MUSCLES_LIST.map(m=>`<span class="mchip ${(r.muscles||[]).includes(m)?'on':''}" ${coach?`onclick="toggleMuscle('${r.id}','${m}')"`:'style="cursor:default"'}>${m}</span>`).join('');
+  const exBlocks=(r.exercises||[]).map((ex,ei)=>renderExBlock(r.id,ex,ei,log,coach,canLog)).join('');
   const isDone=log.done;
-  const exBlocksHtml=(r.exercises||[]).map((ex,ei)=>renderExBlock(day,ex,ei,log,coach)).join('');
-  const muscleChips=coach?`<div class="muscle-chips">${MUSCLES_LIST.map(m=>`<span class="mchip ${(r.muscles||[]).includes(m)?'on':''}" onclick="toggleMuscle('${r.id}','${m}')">${m}</span>`).join('')}</div>`:'';
-  area.innerHTML=`<div class="workout-card">
-    <div class="workout-head">
-      <div>
-        <div class="workout-title">${r.name}</div>
-        <div class="workout-subtitle">${DAY_NAMES[day]||day} · ${THIS_WEEK} · ${(r.muscles||[]).slice(0,3).join(', ')||'—'}</div>
-      </div>
-      ${isDone
-        ?`<button class="workout-done-btn undone" onclick="markDayDone('${day}',false)">↺ Desmarcar</button>`
-        :`<button class="workout-done-btn" onclick="markDayDone('${day}',true)">✅ Completado</button>`
-      }
-      ${coach?`<button class="btn ghost sm" onclick="selectRtnProgram('${r.id}');switchTrnTab('program')">✏ Editar</button>`:''}
+  const doneBtn=isDone?`<button class="btn ghost sm" onclick="markRtnDone('${r.id}',false)">↺ Desmarcar</button>`:`<button class="btn teal sm" onclick="markRtnDone('${r.id}',true)">✓ Marcar hecha</button>`;
+  area.innerHTML=`<div class="rtn-editor">
+    <div class="rtn-editor-head">
+      <input class="rtn-name-inp" type="text" value="${r.name}" id="rtnname-${r.id}" ${coach?`oninput="updateRtnName('${r.id}',this.value)"`:' readonly'}>
+      ${doneBtn}
+      ${coach?`<button class="btn danger sm" onclick="deleteRoutine('${r.id}')">🗑</button>`:''}
     </div>
-    ${isDone?`<div class="workout-done-banner">✅ Completado esta semana</div>`:''}
-    ${muscleChips}
-    <div id="workout-exblocks-${day}">${exBlocksHtml}</div>
-    ${coach?`<div class="workout-actions"><button class="btn ghost sm" onclick="addExToWorkout('${day}')">+ Ejercicio</button></div>`:''}
+    <div class="muscle-chips">${muscleChips}</div>
+    ${isDone?`<div style="background:rgba(194,242,79,.05);border-bottom:1px solid rgba(194,242,79,.15);padding:7px 13px;font-family:'Syne',sans-serif;font-weight:700;font-size:11px;color:var(--accent)">✅ Completado esta semana</div>`:''}
+    <div id="exblocks-${r.id}">${exBlocks}</div>
+    <div style="padding:9px 13px;border-top:1px solid var(--border);display:flex;gap:6px;flex-wrap:wrap">
+      ${coach?`<button class="btn ghost sm" onclick="addExercise('${r.id}')">+ Ejercicio</button><button class="btn ghost sm" onclick="saveRoutineAndToast('${r.id}')">💾 Guardar rutina</button>`:''}
+    </div>
   </div>`;
 }
 
-function renderExBlock(day,ex,ei,log,coach){
+function renderExBlock(rid,ex,ei,log,coach,canLog=false){
   const exLog=(log.exercises&&log.exercises[ex.id])||{sets:[],rpe:0};
-  const prevLog=getPrevLog(day,ex.id);
+  const prevLog=getPrevWeekLog(rid,ex.id);
   const setsHtml=(ex.sets||[]).map((set,si)=>{
-    const ls=(exLog.sets&&exLog.sets[si])||{};
-    const ps=(prevLog&&prevLog.sets&&prevLog.sets[si])||{};
-    const isDone=ls.done||false;
-    const phW=ps.weight?`Ant: ${ps.weight}kg`:(set.weight?`${set.weight}kg`:'—');
-    const phR=ps.reps||set.reps||'—';
-    const wVal=ls.weight!=null&&ls.weight!==''?ls.weight:'';
-    const rVal=ls.reps!=null&&ls.reps!==''?ls.reps:'';
-    return`<div class="set-row${isDone?' set-done':''}" id="sr-${day}-${ex.id}-${si}">
+    const logSet=(exLog.sets&&exLog.sets[si])||{};
+    const prevSet=(prevLog&&prevLog.sets&&prevLog.sets[si])||{};
+    const isDone=logSet.done||false;
+    const prevW=prevSet.weight?`${prevSet.weight}kg`:'—';
+    const prevR=prevSet.reps||'—';
+    return`<div class="set-row" id="setrow-${rid}-${ex.id}-${si}">
       <span class="set-num">${si+1}</span>
-      <input class="set-inp${isDone?' done-val':''}" type="number" min="0" step="0.5" placeholder="${phW}" value="${wVal}" inputmode="decimal"
-        onchange="logSetVal('${day}','${ex.id}',${si},'weight',this.value)">
-      <input class="set-inp${isDone?' done-val':''}" type="number" min="0" placeholder="${phR}" value="${rVal}" inputmode="numeric"
-        onchange="logSetVal('${day}','${ex.id}',${si},'reps',this.value)">
-      <input class="set-inp" type="text" placeholder="—" value="${ls.time||''}"
-        onchange="logSetVal('${day}','${ex.id}',${si},'time',this.value)">
-      <button class="set-check-btn${isDone?' checked':''}" onclick="toggleSetDone('${day}','${ex.id}',${si})" title="${isDone?'Desmarcar':'Marcar hecha'}">${isDone?'✓':'○'}</button>
-      ${coach?`<button class="set-del-btn" onclick="delSet('${day}',${ei},${si})" title="Eliminar">×</button>`:''}
+      ${(coach && !canLog)
+        ? `<input class="set-inp struct-readonly" type="text" value="${set.weight||'—'}" title="Peso planificado">`
+        : `<input class="set-inp ${isDone?'done-val':''}" type="number" min="0" placeholder="${prevW}" value="${logSet.weight||''}" onchange="logSetVal('${rid}','${ex.id}',${si},'weight',this.value)" title="Peso (kg)">`}
+      <input class="set-inp ${(coach&&!canLog)?'struct-readonly':isDone?'done-val':''}" type="${(coach&&!canLog)?'text':'number'}" min="0" ${(coach&&!canLog)?`value="${set.reps||'—'}" title="Reps planificadas"`:`placeholder="${prevR}" value="${logSet.reps||set.reps||''}" onchange="logSetVal('${rid}','${ex.id}',${si},'reps',this.value)" title="Reps"`}>
+      <input class="set-inp ${(coach&&!canLog)?'struct-readonly':''}" type="text" ${(coach&&!canLog)?`value="${set.time||'—'}" title="Tiempo"`:`placeholder="—" value="${logSet.time||set.time||''}" onchange="logSetVal('${rid}','${ex.id}',${si},'time',this.value)" title="Tiempo"`}>
+      ${(coach&&!canLog)
+        ? `<span style="color:var(--muted2);font-size:9px;text-align:center">—</span>`
+        : `<input type="checkbox" class="set-cb" ${isDone?'checked':''} onchange="logSetDone('${rid}','${ex.id}',${si},this.checked)">`}
+      ${coach?`<button class="set-del" onclick="delSet('${rid}',${ei},${si})">×</button>`:`<span></span>`}
     </div>`;
   }).join('');
   const rpeVal=exLog.rpe||0;
-  const rpeBtns=[...Array(10)].map((_,i)=>`<button class="rpebtn${rpeVal===i+1?' on':''}" onclick="logRpe('${day}','${ex.id}',${i+1})" title="RPE ${i+1}">${i+1}</button>`).join('');
-  const noteHtml=ex.note
-    ?(coach?`<input class="ex-note-inp" type="text" value="${(ex.note||'').replace(/"/g,'&quot;')}" placeholder="Nota..." onchange="updateExNote('${ex.id}',${ei},'${currentRtnId||SCHEDULE[day]||''}',this.value)">`
-          :`<div class="ex-note">${ex.note}</div>`)
-    :(coach?`<input class="ex-note-inp" type="text" value="" placeholder="Nota técnica..." onchange="updateExNote('${ex.id}',${ei},'${currentRtnId||SCHEDULE[day]||''}',this.value)">`:'');
-  return`<div class="ex-block" id="exb-${day}-${ex.id}">
-    <div class="ex-block-head">
-      ${coach
-        ?`<input class="ex-block-name-inp" type="text" value="${(ex.name||'').replace(/"/g,'&quot;')}" placeholder="Nombre del ejercicio" onchange="updateExName('${ex.id}',${ei},'${currentRtnId||SCHEDULE[day]||''}',this.value)">`
-        :`<span class="ex-block-name">${ex.name||'Ejercicio'}</span>`
-      }
-      <button class="gif-btn" onclick="openGifModal('${(ex.name||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;')}')">🎬</button>
-      ${coach?`<button class="set-del-btn" onclick="delExFromWorkout('${day}','${ex.id}')" title="Eliminar ejercicio">🗑</button>`:''}
+  const rpeBtns=(canLog||!coach)?[...Array(10)].map((_,i)=>`<button class="rpebtn ${rpeVal===i+1?'on':''}" onclick="logRpe('${rid}','${ex.id}',${i+1})">${i+1}</button>`).join(''):'';
+  return`<div class="exblock" id="exblock-${rid}-${ex.id}">
+    <div class="exblock-head">
+      <input class="ex-name-inp" type="text" value="${ex.name}" placeholder="Nombre" ${coach?`onchange="updateExName('${rid}',${ei},this.value)"`:' readonly'}>
+      <button class="gif-btn" onclick="openGifModal('${ex.name.replace(/'/g,'\\\'').replace(/"/g,'&quot;')}')">🎬 GIF</button>
+      ${coach?`<button class="btn danger xs" onclick="delExercise('${rid}','${ex.id}')">✕</button>`:''}
     </div>
-    ${noteHtml}
-    <div class="sets-table">
-      <div class="sets-hdr"><span>#</span><span>Peso kg</span><span>Reps</span><span>Tiempo</span><span>✓</span>${coach?'<span></span>':''}</div>
-      <div id="sets-${day}-${ex.id}">${setsHtml}</div>
+    <input class="ex-note-inp" type="text" value="${ex.note||''}" placeholder="${coach?'Nota técnica...':'Nota del entrenador'}" ${coach?`onchange="updateExNote('${rid}',${ei},this.value)"`:' readonly'}>
+    <div class="exsets">
+      <div class="sets-hdr"><span>#</span><span>Peso(kg)</span><span>Reps</span><span>Tiempo</span><span>✓</span><span></span></div>
+      <div id="sets-${rid}-${ex.id}">${setsHtml}</div>
     </div>
-    <div class="rpe-row"><span class="rpe-lbl">RPE</span>${rpeBtns}</div>
-    ${coach?`<button class="add-set-btn" onclick="addSetToWorkout('${day}','${ex.id}')">+ Serie</button>`:''}
+    ${(canLog||!coach)?`<div class="rpe-row"><span class="rpe-lbl">RPE:</span>${rpeBtns}</div>`:''}
+    ${coach?`<button class="add-set-btn" onclick="addSet('${rid}','${ex.id}')">+ Serie</button>`:''}
   </div>`;
 }
 
-// ── ROUTINE EDITOR (coach — program tab) ──
-function renderRtnEditor(){
-  const area=document.getElementById('trn-editor-area');if(!area)return;
-  const r=getRtn(currentRtnId);
-  if(!r){area.innerHTML=`<div class="trn-empty"><div style="font-size:32px">📋</div><div>Selecciona una rutina para editar</div></div>`;return;}
-  const exBlocksHtml=(r.exercises||[]).map((ex,ei)=>renderRtnExBlock(r.id,ex,ei)).join('');
-  const muscleChips=MUSCLES_LIST.map(m=>`<span class="mchip ${(r.muscles||[]).includes(m)?'on':''}" onclick="toggleMuscle('${r.id}','${m}')">${m}</span>`).join('');
-  area.innerHTML=`<div class="workout-card">
-    <div class="workout-head">
-      <input class="rtn-name-inp" type="text" id="rtnname-${r.id}" value="${(r.name||'').replace(/"/g,'&quot;')}" oninput="updateRtnName('${r.id}',this.value)" style="flex:1">
-      <button class="btn ghost sm" onclick="saveRoutineAndToast('${r.id}')">💾 Guardar</button>
-      <button class="btn danger sm" onclick="deleteRoutine('${r.id}')">🗑</button>
-    </div>
-    <div class="muscle-chips">${muscleChips}</div>
-    <div id="rtn-exblocks-${r.id}">${exBlocksHtml}</div>
-    <div class="workout-actions">
-      <button class="btn ghost sm" onclick="addExToRoutine('${r.id}')">+ Ejercicio</button>
-    </div>
-  </div>`;
-}
+window.newRoutine=async()=>{if(!isCoachView())return;const id='rt'+Date.now();ROUTINES.push({id,name:'Nueva rutina',muscles:[],exercises:[],client_id:currentClientId,coach_id:currentUser.id});await saveRoutinesToServer();currentRtnId=id;renderTrnSidebar();renderTrnEditor();};
+window.deleteRoutine=async(id)=>{if(!confirm('¿Eliminar rutina?')||!isCoachView())return;await sb.from('routines').delete().eq('id',id);ROUTINES=ROUTINES.filter(r=>r.id!==id);Object.keys(SCHEDULE).forEach(d=>{if(SCHEDULE[d]===id)delete SCHEDULE[d];});await saveRoutinesToServer();currentRtnId=null;renderTrnSidebar();renderTrnEditor();renderTrnWeekBar();};
+window.updateRtnName=(id,val)=>{const r=getRtn(id);if(!r)return;r.name=val;const li=document.querySelector('.rtn-item.active .rtn-item-name');if(li)li.textContent=val;};
+window.saveRoutineAndToast=async(id)=>{const inp=document.getElementById(`rtnname-${id}`);const r=getRtn(id);if(!r)return;if(inp)r.name=inp.value.trim()||r.name;await saveRoutinesToServer();renderTrnSidebar();renderTrnWeekBar();toast('Rutina guardada ✓');};
+window.toggleMuscle=(rid,m)=>{const r=getRtn(rid);if(!r)return;const i=(r.muscles||[]).indexOf(m);i>=0?r.muscles.splice(i,1):(r.muscles=r.muscles||[],r.muscles.push(m));const chips=document.querySelector('.muscle-chips');if(chips)chips.innerHTML=MUSCLES_LIST.map(mu=>`<span class="mchip ${(r.muscles||[]).includes(mu)?'on':''}" onclick="toggleMuscle('${rid}','${mu}')">${mu}</span>`).join('');};
+window.addExercise=(rid)=>{if(!isCoachView())return;const r=getRtn(rid);if(!r)return;const ex={id:'ex'+Date.now(),name:'',note:'',sets:[{reps:10,weight:'',time:''}],rpe:0};r.exercises.push(ex);const log=getWeekLog(rid);const _selfTrn=currentClientId===currentUser.id;document.getElementById(`exblocks-${rid}`)?.insertAdjacentHTML('beforeend',renderExBlock(rid,ex,r.exercises.length-1,log,true,_selfTrn));};
+window.delExercise=(rid,exId)=>{if(!isCoachView())return;const r=getRtn(rid);if(!r)return;r.exercises=r.exercises.filter(e=>e.id!==exId);document.getElementById(`exblock-${rid}-${exId}`)?.remove();};
+window.updateExName=(rid,ei,val)=>{const r=getRtn(rid);if(!r||!r.exercises[ei])return;r.exercises[ei].name=val;};
+window.updateExNote=(rid,ei,val)=>{const r=getRtn(rid);if(!r||!r.exercises[ei])return;r.exercises[ei].note=val;};
+window.addSet=(rid,exId)=>{if(!isCoachView())return;const r=getRtn(rid);if(!r)return;const ex=r.exercises.find(e=>e.id===exId);if(!ex)return;const last=ex.sets[ex.sets.length-1]||{};ex.sets.push({reps:last.reps||10,weight:last.weight||'',time:last.time||''});const si=ex.sets.length-1;document.getElementById(`sets-${rid}-${exId}`)?.insertAdjacentHTML('beforeend',`<div class="set-row"><span class="set-num">${si+1}</span><input class="set-inp struct-readonly" type="text" value="—"><input class="set-inp struct-readonly" type="text" value="${last.reps||10}"><input class="set-inp struct-readonly" type="text" value="—"><span style="color:var(--muted2);font-size:9px;text-align:center">—</span><button class="set-del" onclick="delSet('${rid}',0,${si})">×</button></div>`);};
+window.delSet=(rid,ei,si)=>{if(!isCoachView())return;const r=getRtn(rid);if(!r||!r.exercises[ei])return;r.exercises[ei].sets.splice(si,1);renderTrnEditor();};
 
-function renderRtnExBlock(rid,ex,ei){
-  const setsHtml=(ex.sets||[]).map((set,si)=>`<div class="set-row" id="rsr-${rid}-${ex.id}-${si}">
-    <span class="set-num">${si+1}</span>
-    <input class="set-inp" type="number" min="0" step="0.5" placeholder="kg" value="${set.weight||''}" onchange="updateTmplSet('${rid}',${ei},${si},'weight',this.value)">
-    <input class="set-inp" type="number" min="0" placeholder="reps" value="${set.reps||''}" onchange="updateTmplSet('${rid}',${ei},${si},'reps',this.value)">
-    <input class="set-inp" type="text" placeholder="—" value="${set.time||''}" onchange="updateTmplSet('${rid}',${ei},${si},'time',this.value)">
-    <span></span>
-    <button class="set-del-btn" onclick="delTmplSet('${rid}',${ei},${si})">×</button>
-  </div>`).join('');
-  return`<div class="ex-block" id="rtne-${rid}-${ex.id}">
-    <div class="ex-block-head">
-      <input class="ex-block-name-inp" type="text" value="${(ex.name||'').replace(/"/g,'&quot;')}" placeholder="Nombre" onchange="updateRtnExName('${rid}',${ei},this.value)">
-      <button class="gif-btn" onclick="openGifModal('${(ex.name||'').replace(/'/g,'&#39;')}')">🎬</button>
-      <button class="set-del-btn" onclick="delRtnEx('${rid}','${ex.id}')">🗑</button>
-    </div>
-    <input class="ex-note-inp" type="text" value="${(ex.note||'').replace(/"/g,'&quot;')}" placeholder="Nota técnica..." onchange="updateRtnExNote('${rid}',${ei},this.value)">
-    <div class="sets-table">
-      <div class="sets-hdr"><span>#</span><span>Peso ref.</span><span>Reps ref.</span><span>Tiempo</span><span></span><span></span></div>
-      <div id="rtns-${rid}-${ex.id}">${setsHtml}</div>
-    </div>
-    <button class="add-set-btn" onclick="addTmplSet('${rid}','${ex.id}')">+ Serie</button>
-  </div>`;
-}
+function ensureExLog(rid,exId){if(!TRN_LOG[THIS_WEEK])TRN_LOG[THIS_WEEK]={};if(!TRN_LOG[THIS_WEEK][rid])TRN_LOG[THIS_WEEK][rid]={done:false,exercises:{}};if(!TRN_LOG[THIS_WEEK][rid].exercises[exId])TRN_LOG[THIS_WEEK][rid].exercises[exId]={sets:[],rpe:0};return TRN_LOG[THIS_WEEK][rid].exercises[exId];}
+function ensureSetLog(rid,exId,si){const el=ensureExLog(rid,exId);while(el.sets.length<=si)el.sets.push({});return el.sets[si];}
+window.logSetVal=async(rid,exId,si,f,v)=>{const s=ensureSetLog(rid,exId,si);s[f]=f==='weight'||f==='reps'?+v:v;await saveTrainingLog(rid);renderTrnStats();};
+window.logSetDone=async(rid,exId,si,checked)=>{const s=ensureSetLog(rid,exId,si);s.done=checked;const row=document.querySelector(`#setrow-${rid}-${exId}-${si}`);if(row)row.querySelectorAll('.set-inp').forEach(i=>{checked?i.classList.add('done-val'):i.classList.remove('done-val');});await saveTrainingLog(rid);renderTrnStats();};
+window.logRpe=async(rid,exId,val)=>{const el=ensureExLog(rid,exId);el.rpe=val;const rpeRow=document.querySelector(`#exblock-${rid}-${exId} .rpe-row`);if(rpeRow)rpeRow.innerHTML=`<span class="rpe-lbl">RPE:</span>`+[...Array(10)].map((_,i)=>`<button class="rpebtn ${val===i+1?'on':''}" onclick="logRpe('${rid}','${exId}',${i+1})">${i+1}</button>`).join('');await saveTrainingLog(rid);};
+window.markRtnDone=async(rid,done)=>{if(!TRN_LOG[THIS_WEEK])TRN_LOG[THIS_WEEK]={};if(!TRN_LOG[THIS_WEEK][rid])TRN_LOG[THIS_WEEK][rid]={done:false,exercises:{}};TRN_LOG[THIS_WEEK][rid].done=done;await saveTrainingLog(rid);renderTrnSidebar();renderTrnEditor();renderTrnWeekBar();renderTrnStats();toast(done?'✅ Entrenamiento completado':'↺ Desmarcado');};
 
-// ── ROUTINE CRUD ──
-window.newRoutine=async()=>{
-  if(!isCoachView())return;
-  const id='rt'+Date.now();
-  ROUTINES.push({id,name:'Nueva rutina',muscles:[],exercises:[],client_id:currentClientId,coach_id:currentUser.id});
-  await saveRoutinesToServer();
-  currentRtnId=id;
-  switchTrnTab('program');
-  renderTrnSidebar();
-  renderRtnEditor();
-};
-window.deleteRoutine=async(id)=>{
-  if(!confirm('¿Eliminar rutina?')||!isCoachView())return;
-  await sb.from('routines').delete().eq('id',id);
-  ROUTINES=ROUTINES.filter(r=>r.id!==id);
-  Object.keys(SCHEDULE).forEach(d=>{if(SCHEDULE[d]===id)delete SCHEDULE[d];});
-  await saveRoutinesToServer();
-  currentRtnId=null;
-  renderTrnSidebar();renderTrnWeekBar();
-  const area=document.getElementById('trn-editor-area');
-  if(area)area.innerHTML=`<div class="trn-empty"><div style="font-size:32px">🗑</div><div>Rutina eliminada</div></div>`;
-};
-window.updateRtnName=(id,val)=>{const r=getRtn(id);if(r)r.name=val;};
-window.saveRoutineAndToast=async(id)=>{
-  const r=getRtn(id);if(!r)return;
-  const inp=document.getElementById(`rtnname-${id}`);
-  if(inp) r.name=inp.value.trim()||r.name;
-  await saveRoutinesToServer();
-  renderTrnSidebar();renderTrnWeekBar();
-  toast('Rutina guardada ✓');
-};
-window.toggleMuscle=(rid,m)=>{
-  const r=getRtn(rid);if(!r)return;
-  const i=(r.muscles||[]).indexOf(m);
-  i>=0?r.muscles.splice(i,1):(r.muscles=r.muscles||[],r.muscles.push(m));
-  document.querySelector(`#rtn-exblocks-${rid}`)?.closest('.workout-card')?.querySelector('.muscle-chips')
-    ?.querySelectorAll('.mchip').forEach(c=>{c.classList.toggle('on',(r.muscles||[]).includes(c.textContent));});
-};
-// Routine template CRUD
-window.addExToRoutine=(rid)=>{
-  if(!isCoachView())return;
-  const r=getRtn(rid);if(!r)return;
-  const ex={id:'ex'+Date.now(),name:'',note:'',sets:[{reps:10,weight:'',time:''}]};
-  r.exercises.push(ex);
-  document.getElementById(`rtn-exblocks-${rid}`)?.insertAdjacentHTML('beforeend',renderRtnExBlock(rid,ex,r.exercises.length-1));
-};
-window.delRtnEx=(rid,exId)=>{
-  if(!isCoachView())return;
-  const r=getRtn(rid);if(!r)return;
-  r.exercises=r.exercises.filter(e=>e.id!==exId);
-  document.getElementById(`rtne-${rid}-${exId}`)?.remove();
-};
-window.updateRtnExName=(rid,ei,val)=>{const r=getRtn(rid);if(r&&r.exercises[ei])r.exercises[ei].name=val;};
-window.updateRtnExNote=(rid,ei,val)=>{const r=getRtn(rid);if(r&&r.exercises[ei])r.exercises[ei].note=val;};
-window.updateTmplSet=(rid,ei,si,f,v)=>{const r=getRtn(rid);if(r&&r.exercises[ei]&&r.exercises[ei].sets[si])r.exercises[ei].sets[si][f]=v;};
-window.addTmplSet=(rid,exId)=>{
-  if(!isCoachView())return;
-  const r=getRtn(rid);if(!r)return;
-  const ex=r.exercises.find(e=>e.id===exId);if(!ex)return;
-  const last=ex.sets[ex.sets.length-1]||{};
-  ex.sets.push({reps:last.reps||10,weight:'',time:''});
-  const si=ex.sets.length-1;
-  const set=ex.sets[si];
-  const ei=r.exercises.indexOf(ex);
-  document.getElementById(`rtns-${rid}-${exId}`)?.insertAdjacentHTML('beforeend',
-    `<div class="set-row" id="rsr-${rid}-${exId}-${si}">
-      <span class="set-num">${si+1}</span>
-      <input class="set-inp" type="number" min="0" step="0.5" placeholder="kg" value="" onchange="updateTmplSet('${rid}',${ei},${si},'weight',this.value)">
-      <input class="set-inp" type="number" min="0" placeholder="reps" value="${set.reps||''}" onchange="updateTmplSet('${rid}',${ei},${si},'reps',this.value)">
-      <input class="set-inp" type="text" placeholder="—" value="" onchange="updateTmplSet('${rid}',${ei},${si},'time',this.value)">
-      <span></span>
-      <button class="set-del-btn" onclick="delTmplSet('${rid}',${ei},${si})">×</button>
-    </div>`
-  );
-};
-window.delTmplSet=(rid,ei,si)=>{
-  const r=getRtn(rid);if(!r||!r.exercises[ei])return;
-  r.exercises[ei].sets.splice(si,1);
-  renderRtnEditor();
-};
-
-// ── WORKOUT DAY CRUD (coach adds/removes exercises for a specific day's workout) ──
-window.addExToWorkout=(day)=>{
-  if(!isCoachView())return;
-  const rid=SCHEDULE[day]||'';const r=getRtn(rid);if(!r)return;
-  const ex={id:'ex'+Date.now(),name:'',note:'',sets:[{reps:10,weight:'',time:''}]};
-  r.exercises.push(ex);
-  const log=getDayLog(day);
-  document.getElementById(`workout-exblocks-${day}`)?.insertAdjacentHTML('beforeend',renderExBlock(day,ex,r.exercises.length-1,log,true));
-};
-window.delExFromWorkout=(day,exId)=>{
-  if(!isCoachView())return;
-  const rid=SCHEDULE[day]||'';const r=getRtn(rid);if(!r)return;
-  r.exercises=r.exercises.filter(e=>e.id!==exId);
-  document.getElementById(`exb-${day}-${exId}`)?.remove();
-};
-window.updateExName=(exId,ei,rid,val)=>{const r=getRtn(rid);if(r&&r.exercises[ei])r.exercises[ei].name=val;};
-window.updateExNote=(exId,ei,rid,val)=>{const r=getRtn(rid);if(r&&r.exercises[ei])r.exercises[ei].note=val;};
-window.addSetToWorkout=(day,exId)=>{
-  if(!isCoachView())return;
-  const rid=SCHEDULE[day]||'';const r=getRtn(rid);if(!r)return;
-  const ex=r.exercises.find(e=>e.id===exId);if(!ex)return;
-  const last=ex.sets[ex.sets.length-1]||{};
-  ex.sets.push({reps:last.reps||10,weight:'',time:''});
-  const si=ex.sets.length-1,ei=r.exercises.indexOf(ex);
-  const log=getDayLog(day);
-  document.getElementById(`sets-${day}-${exId}`)?.insertAdjacentHTML('beforeend',
-    renderExBlock(day,ex,ei,log,true).match(new RegExp(`id="sr-${day}-${exId}-${si}"[\\s\\S]*?<\\/div>`))?.[0]||'');
-  // Simpler: just re-render
-  renderTrnEditor();
-};
-window.delSet=(day,ei,si)=>{
-  if(!isCoachView())return;
-  const rid=SCHEDULE[day]||'';const r=getRtn(rid);if(!r||!r.exercises[ei])return;
-  r.exercises[ei].sets.splice(si,1);
-  renderTrnEditor();
-};
-
-// ── LOG FUNCTIONS ──
-function ensureExLog(day,exId){
-  if(!TRN_LOG[THIS_WEEK])TRN_LOG[THIS_WEEK]={};
-  if(!TRN_LOG[THIS_WEEK][day])TRN_LOG[THIS_WEEK][day]={done:false,exercises:{}};
-  if(!TRN_LOG[THIS_WEEK][day].exercises[exId])TRN_LOG[THIS_WEEK][day].exercises[exId]={sets:[],rpe:0};
-  return TRN_LOG[THIS_WEEK][day].exercises[exId];
-}
-function ensureSetLog(day,exId,si){
-  const el=ensureExLog(day,exId);
-  while(el.sets.length<=si)el.sets.push({});
-  return el.sets[si];
-}
-window.logSetVal=async(day,exId,si,f,v)=>{
-  const s=ensureSetLog(day,exId,si);
-  s[f]=f==='weight'||f==='reps'?parseFloat(v)||0:v;
-  await saveTrainingLog(day);
-  renderTrnStats();
-};
-window.toggleSetDone=async(day,exId,si)=>{
-  const s=ensureSetLog(day,exId,si);
-  s.done=!s.done;
-  const btn=document.getElementById(`sr-${day}-${exId}-${si}`)?.querySelector('.set-check-btn');
-  const row=document.getElementById(`sr-${day}-${exId}-${si}`);
-  if(btn){btn.classList.toggle('checked',s.done);btn.textContent=s.done?'✓':'○';}
-  if(row){
-    row.classList.toggle('set-done',s.done);
-    row.querySelectorAll('.set-inp').forEach(i=>i.classList.toggle('done-val',s.done));
-  }
-  if(s.done){
-    // Get rest time: logged value > template value > nothing
-    const timeRaw = s.time || (()=>{
-      const r=getRtn(SCHEDULE[day]);
-      return r?.exercises?.find(e=>e.id===exId)?.sets?.[si]?.time || '';
-    })();
-    const secs = parseTimeSecs(timeRaw);
-    if(secs > 0) startRestTimer(secs);
-  } else {
-    stopRestTimer();
-  }
-  await saveTrainingLog(day);
-  renderTrnStats();
-};
-window.logRpe=async(day,exId,val)=>{
-  const el=ensureExLog(day,exId);el.rpe=val;
-  const rpeRow=document.querySelector(`#exb-${day}-${exId} .rpe-row`);
-  if(rpeRow)rpeRow.innerHTML=`<span class="rpe-lbl">RPE</span>`+[...Array(10)].map((_,i)=>`<button class="rpebtn${val===i+1?' on':''}" onclick="logRpe('${day}','${exId}',${i+1})">${i+1}</button>`).join('');
-  await saveTrainingLog(day);
-};
-window.markDayDone=async(day,done)=>{
-  if(!TRN_LOG[THIS_WEEK])TRN_LOG[THIS_WEEK]={};
-  if(!TRN_LOG[THIS_WEEK][day])TRN_LOG[THIS_WEEK][day]={done:false,exercises:{}};
-  TRN_LOG[THIS_WEEK][day].done=done;
-  await saveTrainingLog(day);
-  renderTrnSidebar();renderTrnWeekBar();renderTrnEditor();renderTrnStats();
-  toast(done?'✅ ¡Entrenamiento completado!':'↺ Desmarcado');
-};
-window.markRtnDone=window.markDayDone;
-
-// ── REST TIMER ──
-// Parsea: "90" → 90s, "1:30" → 90s, "2:00" → 120s, "2m" → 120s, "30s" → 30s
-function parseTimeSecs(raw){
-  if(!raw) return 0;
-  const s = String(raw).trim().toLowerCase();
-  if(!s || s==='-' || s==='—') return 0;
-  // mm:ss
-  const mmsс = s.match(/^(\d+):(\d{2})$/);
-  if(mmsс) return parseInt(mmsс[1])*60 + parseInt(mmsс[2]);
-  // Xm or Xmin
-  const min = s.match(/^(\d+)\s*m(in)?$/);
-  if(min) return parseInt(min[1])*60;
-  // Xs or Xseg
-  const sec = s.match(/^(\d+)\s*s(eg)?$/);
-  if(sec) return parseInt(sec[1]);
-  // plain number → seconds
-  const n = parseFloat(s);
-  if(!isNaN(n) && n > 0) return Math.round(n);
-  return 0;
-}
-let _restInterval=null;
-function startRestTimer(secs){
-  stopRestTimer();
-  let left=secs;
-  const el=document.getElementById('rest-timer');
-  const timeEl=document.getElementById('rest-timer-time');
-  if(!el||!timeEl)return;
-  el.classList.add('visible');
-  const update=()=>{if(left<=0){stopRestTimer();return;}const m=Math.floor(left/60),s=left%60;timeEl.textContent=`${m}:${s.toString().padStart(2,'0')}`;left--;};
-  update();
-  _restInterval=setInterval(update,1000);
-}
-window.stopRestTimer=()=>{
-  if(_restInterval){clearInterval(_restInterval);_restInterval=null;}
-  const el=document.getElementById('rest-timer');
-  if(el)el.classList.remove('visible');
-};
-
-// ── STATS ──
 function renderTrnStats(){
   const sa=document.getElementById('trn-stats-area');const sg=document.getElementById('trn-stats-grid');if(!sa||!sg)return;
-  const wd=TRN_LOG[THIS_WEEK]||{};
-  let tv=0,tDone=0,tR=0;
-  const prRows=[];
-  DAY_LABELS.forEach(day=>{
-    const rid=SCHEDULE[day]||'';if(!rid)return;
-    tR++;
-    const dl=wd[day]||{};
-    if(dl.done)tDone++;
-    const rtn=getRtn(rid);if(!rtn)return;
-    (rtn.exercises||[]).forEach(ex=>{
-      const exLog=(dl.exercises||{})[ex.id]||{};
-      (exLog.sets||[]).forEach(s=>{if(s.done)tv+=((+s.weight||0)*(+s.reps||0));});
-      const tMax=Math.max(...(exLog.sets||[]).filter(s=>s.done).map(s=>+s.weight||0),0);
-      if(tMax>0&&ex.name)prRows.push(`<div class="stat-row"><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ex.name} <span style="color:var(--muted2);font-size:9px">${day}</span></span><span class="sv">${tMax}kg</span></div>`);
-    });
-  });
-  sg.innerHTML=`<div class="stat-card"><h4>Semana ${THIS_WEEK}</h4><div class="stat-row"><span>Días</span><span class="sv">${tDone}/${tR}</span></div><div class="stat-row"><span>Volumen</span><span class="sv">${tv.toLocaleString()}kg</span></div></div><div class="stat-card" style="grid-column:1/-1"><h4>Pesos máximos</h4>${prRows.length?prRows.join(''):'<div class="stat-row" style="color:var(--muted2)">Sin series completadas</div>'}</div>`;
-  const show=tDone>0||tv>0;
-  sa.style.display=show&&trnTabMode!=='progress'?'block':'none';
-  sa.dataset.hasData=show?'1':'0';
+  const wd=TRN_LOG[THIS_WEEK]||{};const prevKeys=Object.keys(TRN_LOG).sort().filter(k=>k<THIS_WEEK);const pd=prevKeys.length?TRN_LOG[prevKeys[prevKeys.length-1]]:{};
+  const mVol={};let tDone=0,tR=0;
+  ROUTINES.forEach(r=>{const rl=wd[r.id]||{};if(rl.done)tDone++;tR++;(r.muscles||[]).forEach(m=>{if(!mVol[m])mVol[m]=0;Object.values(rl.exercises||{}).forEach(el=>{(el.sets||[]).forEach(s=>{if(s.done)mVol[m]+=((+s.weight||0)*(+s.reps||0));});});});});
+  let tv=0,pv=0;
+  Object.values(wd).forEach(rl=>{Object.values(rl.exercises||{}).forEach(el=>{(el.sets||[]).forEach(s=>{if(s.done)tv+=((+s.weight||0)*(+s.reps||0));});});});
+  Object.values(pd).forEach(rl=>{Object.values(rl.exercises||{}).forEach(el=>{(el.sets||[]).forEach(s=>{if(s.done)pv+=((+s.weight||0)*(+s.reps||0));});});});
+  const vd=tv-pv,vp=pv>0?Math.round(vd/pv*100):0;const maxMV=Math.max(...Object.values(mVol),1);
+  const mRows=Object.entries(mVol).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).map(([m,v])=>`<div class="stat-row"><span>${m}</span><div class="vol-bar-wrap"><div class="vol-bar" style="width:${Math.round(v/maxMV*100)}%"></div></div><span class="sv">${v.toLocaleString()}kg</span></div>`).join('')||`<div class="stat-row" style="color:var(--muted2)">Sin datos esta semana</div>`;
+  const prRows=[];ROUTINES.forEach(r=>{(r.exercises||[]).forEach(ex=>{const tl=(wd[r.id]?.exercises||{})[ex.id]||{};const pl=(pd[r.id]?.exercises||{})[ex.id]||{};const tMax=Math.max(...(tl.sets||[]).filter(s=>s.done).map(s=>+s.weight||0),0);const pMax=Math.max(...(pl.sets||[]).filter(s=>s.done).map(s=>+s.weight||0),0);if(tMax>0){const diff=tMax-pMax;const cls=diff>0?'prog-up':diff<0?'prog-dn':'prog-eq';const arr=diff>0?`↑${diff}kg`:diff<0?`↓${Math.abs(diff)}kg`:'=';prRows.push(`<div class="stat-row"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;margin-right:5px">${ex.name||'—'}</span><span class="${cls}" style="white-space:nowrap">${tMax}kg <span style="font-size:10px">${arr}</span></span></div>`);}});});
+  sg.innerHTML=`<div class="stat-card"><h4>📅 Semana ${THIS_WEEK}</h4><div class="stat-row"><span>Entrenamientos</span><span class="sv">${tDone}/${tR}</span></div><div class="stat-row"><span>Volumen total</span><span class="sv">${tv.toLocaleString()}kg</span></div><div class="stat-row"><span>vs sem. anterior</span><span class="sv ${vd>=0?'prog-up':'prog-dn'}">${pv>0?(vd>=0?'+':'')+vd+'kg':'—'}</span></div></div><div class="stat-card"><h4>🏋️ Vol. por músculo</h4>${mRows}</div><div class="stat-card" style="grid-column:1/-1"><h4>📈 Pesos máximos</h4><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:0">${prRows.length?prRows.join(''):'<div class="stat-row" style="color:var(--muted2)">Completa series para ver progresión</div>'}</div></div>`;
+  sa.style.display=(tDone>0||tv>0)?'block':'none';
 }
-
-// ── PROGRESS MODULE ──
-function renderTrnProgress(){
-  const area=document.getElementById('trn-progress-area');if(!area)return;
-  const allWeeks={};
-  Object.entries(TRN_LOG_HISTORY||{}).forEach(([wk,d])=>{allWeeks[wk]=d;});
-  if(TRN_LOG[THIS_WEEK])allWeeks[THIS_WEEK]=TRN_LOG[THIS_WEEK];
-  const sortedWeeks=Object.keys(allWeeks).sort();
-  const weeksList=document.getElementById('prog-weeks-list');
-  if(weeksList)weeksList.innerHTML=sortedWeeks.length
-    ?sortedWeeks.slice(-12).reverse().map(wk=>{const wd=allWeeks[wk]||{};const done=Object.values(wd).filter(v=>v.done).length;return`<div>${wk} <span style="color:var(--accent);font-weight:700">${done}</span> días</div>`;}).join('')
-    :'<div style="color:var(--muted)">Sin datos</div>';
-  const exIndex={};
-  ROUTINES.forEach(r=>{(r.exercises||[]).forEach(ex=>{if(ex.id&&ex.name)exIndex[ex.id]=ex.name;});});
-  const exData={};
-  sortedWeeks.forEach(wk=>{
-    const wd=allWeeks[wk]||{};
-    Object.values(wd).forEach(rlog=>{
-      Object.entries(rlog.exercises||{}).forEach(([exId,exlog])=>{
-        const doneSets=(exlog.sets||[]).filter(s=>s.done);if(!doneSets.length)return;
-        const maxW=Math.max(...doneSets.map(s=>+s.weight||0));
-        const vol=doneSets.reduce((a,s)=>a+((+s.weight||0)*(+s.reps||0)),0);
-        if(!exData[exId])exData[exId]=[];
-        const ex=exData[exId].find(e=>e.week===wk);
-        if(ex){ex.maxWeight=Math.max(ex.maxWeight,maxW);ex.totalVol+=vol;}
-        else exData[exId].push({week:wk,maxWeight:maxW,totalVol:vol});
-      });
-    });
-  });
-  const filterSel=document.getElementById('prog-ex-sel');
-  if(filterSel){
-    const cur=filterSel.value;
-    filterSel.innerHTML='<option value="">— Todos —</option>'+Object.keys(exData).map(id=>`<option value="${id}" ${id===cur?'selected':''}>${exIndex[id]||id}</option>`).join('');
-  }
-  const filterId=filterSel?.value||'';
-  const entries=filterId?(exData[filterId]?[[filterId,exData[filterId]]]:[]): Object.entries(exData);
-  const totalSessions=sortedWeeks.filter(wk=>Object.values(allWeeks[wk]||{}).some(v=>v.done)).length;
-  let globalVol=0;Object.values(exData).forEach(arr=>arr.forEach(e=>globalVol+=e.totalVol));
-  const kpiHtml=`<div class="prog-summary">
-    <div class="prog-kpi"><div class="prog-kpi-val">${totalSessions}</div><div class="prog-kpi-lbl">Sesiones</div></div>
-    <div class="prog-kpi"><div class="prog-kpi-val">${sortedWeeks.length}</div><div class="prog-kpi-lbl">Semanas</div></div>
-    <div class="prog-kpi"><div class="prog-kpi-val">${(globalVol/1000).toFixed(1)}t</div><div class="prog-kpi-lbl">Volumen total</div></div>
-  </div>`;
-  if(!entries.length){area.innerHTML=kpiHtml+`<div class="trn-empty"><div style="font-size:32px">📈</div><div>Sin datos de progreso</div><div style="font-size:11px">Completa series con ✓ para ver tu evolución</div></div>`;return;}
-  const cardsHtml=entries.map(([exId,ents])=>{
-    const name=exIndex[exId]||exId;
-    const sorted=[...ents].sort((a,b)=>a.week.localeCompare(b.week));
-    const maxW=Math.max(...sorted.map(e=>e.maxWeight));
-    const totalV=sorted.reduce((a,e)=>a+e.totalVol,0);
-    const chartSvg=buildProgressSVG(sorted,exId);
-    const histRows=sorted.slice(-8).reverse().map((e,i,arr)=>{
-      const prev=arr[i+1];const diff=prev?e.maxWeight-prev.maxWeight:0;
-      const arrow=diff>0?`<span class="prog-up">↑${diff}</span>`:diff<0?`<span class="prog-dn">↓${Math.abs(diff)}</span>`:'';
-      return`<div class="prog-hist-row"><span class="prog-hist-week">${e.week}</span><span class="prog-hist-sets">${(e.totalVol/1000).toFixed(2)}t vol</span><span class="prog-hist-max">${e.maxWeight}kg ${arrow}</span></div>`;
-    }).join('');
-    return`<div class="prog-ex-card"><div class="prog-ex-head"><span class="prog-ex-name">${name}</span><div class="prog-ex-badges"><span class="prog-badge best">🏆 ${maxW}kg</span><span class="prog-badge vol">📦 ${(totalV/1000).toFixed(1)}t</span></div></div><div class="prog-chart-wrap">${chartSvg}</div><div class="prog-history">${histRows}</div></div>`;
-  }).join('');
-  area.innerHTML=kpiHtml+cardsHtml;
-}
-
-function buildProgressSVG(entries,id){
-  if(entries.length<1)return'';
-  const W=520,H=80,PAD={top:8,right:10,bottom:20,left:34};
-  const cW=W-PAD.left-PAD.right,cH=H-PAD.top-PAD.bottom;
-  const weights=entries.map(e=>e.maxWeight);
-  const minV=Math.min(...weights),maxV=Math.max(...weights),range=maxV-minV||1;
-  const xs=entries.map((_,i)=>PAD.left+(i/(Math.max(entries.length-1,1)))*cW);
-  const ys=entries.map(e=>PAD.top+cH-(((e.maxWeight-minV)/range)*cH));
-  let path=`M${xs[0].toFixed(1)},${ys[0].toFixed(1)}`;
-  for(let i=1;i<xs.length;i++)path+=` L${xs[i].toFixed(1)},${ys[i].toFixed(1)}`;
-  const areaPath=path+` L${xs[xs.length-1].toFixed(1)},${PAD.top+cH} L${xs[0].toFixed(1)},${PAD.top+cH} Z`;
-  const dots=xs.map((x,i)=>`<circle cx="${x.toFixed(1)}" cy="${ys[i].toFixed(1)}" r="3" fill="var(--accent)" stroke="var(--bg)" stroke-width="1.5"/>${(i===0||i===xs.length-1||entries.length<=6)?`<text x="${x.toFixed(1)}" y="${(ys[i]-5).toFixed(1)}" text-anchor="middle" font-size="8" fill="var(--accent)" font-family="JetBrains Mono,monospace">${weights[i]}</text>`:''}`).join('');
-  const xLabels=xs.map((x,i)=>(entries.length<=6||i===0||i===entries.length-1)?`<text x="${x.toFixed(1)}" y="${(H-4).toFixed(1)}" text-anchor="middle" font-size="7" fill="var(--muted2)" font-family="JetBrains Mono,monospace">${entries[i].week.slice(5)}</text>`:'').join('');
-  const uid='pg'+(id||'x').replace(/[^a-z0-9]/gi,'');
-  return`<svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:200px"><defs><linearGradient id="${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent)" stop-opacity=".18"/><stop offset="100%" stop-color="var(--accent)" stop-opacity=".01"/></linearGradient></defs><path d="${areaPath}" fill="url(#${uid})"/><path d="${path}" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linejoin="round"/>${dots}${xLabels}</svg>`;
-}
-
-
-// ══════════════════════════════════════════════════════
-//  AJUSTES — API Keys, Client Management, AI Prices
-// ══════════════════════════════════════════════════════
-// Cache: matches real app_settings columns
-let _apiKeys = { supabase_service_key: '', anthropic_key: '', last_price_update: null };
-
-async function loadApiKeys() {
-  if (!isCoachView()) return;
-  try {
-    const { data } = await sb.from('app_settings')
-      .select('anthropic_key, rapidapi_key, supabase_service_key, last_price_update')
-      .eq('user_id', currentUser.id).maybeSingle();
-    if (data) {
-      _apiKeys.anthropic_key       = data.anthropic_key || '';
-      _apiKeys.supabase_service_key = data.supabase_service_key || '';
-      _apiKeys.last_price_update    = data.last_price_update || null;
-    }
-    _syncKeyStatuses();
-    _checkAutoPriceUpdate();
-  } catch(e) { console.warn('loadApiKeys:', e); }
-}
-
-function _syncKeyStatuses() {
-  _syncOneKey('sb-key-status', 'inp-sb-service-key', 'btn-edit-sb', 'btn-del-sb', _apiKeys.supabase_service_key);
-  _syncOneKey('claude-key-status', 'inp-claude-key', 'btn-edit-claude', 'btn-del-claude', _apiKeys.anthropic_key);
-  const lastEl = document.getElementById('price-update-status');
-  if (lastEl && _apiKeys.last_price_update) {
-    const d = new Date(_apiKeys.last_price_update);
-    lastEl.textContent = 'Última: ' + d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
-  }
-}
-
-function _syncOneKey(statusId, inputId, editBtnId, delBtnId, val) {
-  const statusEl = document.getElementById(statusId);
-  const inp      = document.getElementById(inputId);
-  const editBtn  = document.getElementById(editBtnId);
-  const delBtn   = document.getElementById(delBtnId);
-  if (val) {
-    if (statusEl) { statusEl.textContent = '✅ Guardada'; statusEl.style.color = 'var(--accent)'; }
-    // Show masked value in input (read-only until "Modificar" clicked)
-    if (inp) { inp.value = val; inp.readOnly = true; inp.style.color = 'var(--muted2)'; inp.style.letterSpacing = '2px'; }
-    if (editBtn) editBtn.style.display = 'inline-flex';
-    if (delBtn)  delBtn.style.display  = 'inline-flex';
-  } else {
-    if (statusEl) { statusEl.textContent = '⚠ No configurada'; statusEl.style.color = 'var(--muted2)'; }
-    if (inp) { inp.value = ''; inp.readOnly = false; inp.style.color = ''; inp.style.letterSpacing = ''; }
-    if (editBtn) editBtn.style.display = 'none';
-    if (delBtn)  delBtn.style.display  = 'none';
-  }
-}
-
-window.editApiKey = (inputId, keyName) => {
-  const inp = document.getElementById(inputId);
-  if (!inp) return;
-  inp.readOnly = false;
-  inp.style.color = '';
-  inp.style.letterSpacing = '';
-  inp.type = 'text';
-  inp.select();
-  inp.focus();
-};
-
-window.deleteApiKey = async (keyName, statusId, editBtnId, inputId) => {
-  if (!confirm('¿Seguro que quieres borrar esta clave?')) return;
-  _apiKeys[keyName] = '';
-  try {
-    const uid = currentUser.id;
-    const { data: existing } = await sb.from('app_settings').select('id').eq('user_id', uid).maybeSingle();
-    if (existing?.id) {
-      const { error } = await sb.from('app_settings').update({ [keyName]: null }).eq('id', existing.id);
-      if (error) throw error;
-    }
-    _syncKeyStatuses();
-    toast('🗑 Clave eliminada');
-  } catch(e) { toast('Error: ' + e.message); }
-};
-
-// keyName: 'anthropic_key' | 'supabase_service_key'
-window.saveApiKey = async (keyName, inputId, statusId) => {
-  if (!isCoachView()) return;
-  const val = document.getElementById(inputId)?.value?.trim();
-  if (!val) { toast('⚠ Introduce la clave primero'); return; }
-  _apiKeys[keyName] = val;
-  try {
-    await _saveApiKeys();
-    _syncKeyStatuses();
-    toast('🔑 Clave guardada');
-  } catch(e) {
-    toast('Error al guardar: ' + e.message);
-  }
-};
-
-// Save ALL keys in one operation using select-then-update/insert to avoid duplicates
-async function _saveApiKeys() {
-  const uid = currentUser.id;
-  // Check if row exists
-  const { data: existing } = await sb.from('app_settings').select('id').eq('user_id', uid).maybeSingle();
-  const payload = {};
-  if (_apiKeys.anthropic_key)         payload.anthropic_key        = _apiKeys.anthropic_key;
-  if (_apiKeys.supabase_service_key)  payload.supabase_service_key = _apiKeys.supabase_service_key;
-  let err;
-  if (existing?.id) {
-    // UPDATE existing row
-    ({ error: err } = await sb.from('app_settings').update(payload).eq('id', existing.id));
-  } else {
-    // INSERT new row
-    ({ error: err } = await sb.from('app_settings').insert({ user_id: uid, ...payload }));
-  }
-  if (err) throw err;
-}
-
-window.toggleKeyVisibility = (inputId) => {
-  const el = document.getElementById(inputId);
-  if (el) el.type = el.type === 'password' ? 'text' : 'password';
-};
-
-// ── Crear cliente via Edge Function create-client ──
-window.createClientAccount = async () => {
-  if (!isCoachView()) return;
-  const name  = document.getElementById('new-client-name')?.value?.trim();
-  const email = document.getElementById('new-client-email')?.value?.trim();
-  const pass  = document.getElementById('new-client-pass')?.value?.trim();
-  const log   = document.getElementById('create-client-log');
-
-  if (!name || !email || !pass) { log.textContent = '⚠ Rellena todos los campos'; log.style.color='var(--orange)'; return; }
-  if (pass.length < 6)          { log.textContent = '⚠ Contraseña mínimo 6 caracteres'; log.style.color='var(--orange)'; return; }
-
-  log.textContent = '⏳ Creando cuenta...'; log.style.color = 'var(--muted2)';
-
-  try {
-    const { data: result, error: fnErr2 } = await sb.functions.invoke('create-client', {
-      body: { email, password: pass, full_name: name }
-    });
-    if (fnErr2) throw new Error(fnErr2.message || String(fnErr2));
-    if (result?.error) throw new Error(result.error);
-
-    log.innerHTML = `✅ Cliente creado: <strong>${name}</strong> · ${email} · pass: <code>${pass}</code>`;
-    log.style.color = 'var(--accent)';
-    document.getElementById('new-client-name').value = '';
-    document.getElementById('new-client-email').value = '';
-    document.getElementById('new-client-pass').value = '';
-    await loadClients();
-    toast(`✅ Cliente "${name}" creado`);
-  } catch(e) {
-    log.textContent = '❌ Error: ' + e.message;
-    log.style.color = 'var(--red)';
-  }
-};
-
-// ── Auto price update check: once per day ──
-function _checkAutoPriceUpdate() {
-  if (!isCoachView()) return;
-  if (!_apiKeys.anthropic_key) return;
-  const last = _apiKeys.last_price_update;
-  if (!last) { runAiPriceUpdate(); return; }
-  const hoursSince = (Date.now() - new Date(last).getTime()) / 3600000;
-  if (hoursSince >= 24) runAiPriceUpdate();
-}
-
-// ── AI price update using Claude ──
-window.runAiPriceUpdate = async () => {
-  if (!isCoachView()) { toast('Solo el coach puede actualizar precios'); return; }
-  const claudeKey = _apiKeys.anthropic_key;
-  if (!claudeKey) {
-    toast('⚠ Configura la Claude API Key en Ajustes → API Keys');
-    navItemClick(document.querySelector('[data-tab="ajustes"]'));
-    return;
-  }
-
-  const btn      = document.getElementById('btn-ai-prices');
-  const progress = document.getElementById('ai-price-progress');
-  const logEl    = document.getElementById('ai-price-log');
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Actualizando...'; }
-  if (logEl) { logEl.style.display = 'block'; logEl.textContent = ''; }
-
-  const products = Object.keys(PRICES).length > 0
-    ? Object.keys(PRICES)
-    : Object.keys(DB);
-
-  const log = (msg) => {
-    if (logEl) { logEl.textContent += msg + '\n'; logEl.scrollTop = logEl.scrollHeight; }
-    if (progress) progress.textContent = msg;
-  };
-
-  log('🤖 Llamando a Edge Function → Claude...');
-
-  try {
-    const productList = products;
-
-    // Use sb.functions.invoke — handles session JWT automatically, avoids 401
-    const { data, error: fnErr } = await sb.functions.invoke('ai-prices', {
-      body: { products: productList }
-    });
-    if (fnErr) throw new Error(fnErr.message || String(fnErr));
-    if (data?.error) throw new Error(data.error);
-
-    // Edge function returns raw Anthropic response: { content: [{type:'text', text:'...'}] }
-    const rawText = data.content?.[0]?.text || '';
-    if (!rawText) throw new Error('Respuesta vacía de Claude');
-    log('✓ Respuesta recibida. Procesando...');
-
-    let prices;
-    try {
-      const cleaned = rawText.replace(/```json|```/g, '').trim();
-      prices = JSON.parse(cleaned);
-    } catch(pe) {
-      throw new Error('Claude no devolvió JSON válido: ' + rawText.slice(0, 200));
-    }
-    if (!prices || typeof prices !== 'object') throw new Error('JSON inválido en respuesta');
-
-    let updated = 0;
-    for (const [prod, vals] of Object.entries(prices)) {
-      if (!PRICES[prod]) PRICES[prod] = {};
-      if (vals.merc      != null) PRICES[prod].merc      = vals.merc;
-      if (vals.lidl      != null) PRICES[prod].lidl      = vals.lidl;
-      if (vals.carrefour != null) PRICES[prod].carrefour = vals.carrefour;
-      if (vals.dia       != null) PRICES[prod].dia       = vals.dia;
-      if (vals.eroski    != null) PRICES[prod].eroski    = vals.eroski;
-      if (vals.base      != null) PRICES[prod].base      = vals.base;
-      updated++;
-    }
-    log(`✅ ${updated} productos actualizados`);
-
-    // Save to server (shared with all clients)
-    const coachId = currentUser.id;
-    const rows = Object.entries(PRICES).map(([product, v]) => ({
-      coach_id: coachId, product,
-      merc: v.merc||null, lidl: v.lidl||null,
-      carrefour: v.carrefour||null, dia: v.dia||null, eroski: v.eroski||null,
-      base_unit: v.base||null
-    }));
-    if (rows.length > 0) {
-      const { error: pErr } = await sb.from('prices').upsert(rows, { onConflict: 'coach_id,product' });
-      if (pErr) log('⚠ Error guardando: ' + pErr.message);
-      else log('💾 Precios guardados en Supabase (visible a todos los clientes)');
-    }
-
-    // Save last update timestamp
-    _apiKeys.last_price_update = new Date().toISOString();
-    try {
-      const uid = currentUser.id;
-      const { data: ex2 } = await sb.from('app_settings').select('id').eq('user_id', uid).maybeSingle();
-      if (ex2?.id) await sb.from('app_settings').update({ last_price_update: _apiKeys.last_price_update }).eq('id', ex2.id);
-    } catch(e) { console.warn('last_price_update save:', e); }
-
-    _syncKeyStatuses();
-    renderCompra();
-    toast('💰 Precios actualizados con IA ✓');
-
-  } catch(e) {
-    log('❌ Error: ' + e.message);
-    toast('Error actualizando precios: ' + e.message);
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '🤖 Actualizar precios ahora'; }
-    if (progress) setTimeout(() => { progress.textContent = ''; }, 4000);
-  }
-};
 
 // ══════════════════════════════════════════════════════
 //  NOTES
@@ -3982,8 +3023,7 @@ function showTab(name){
   }
   if(name==='compra'){checkPrices();renderCompra();}
   if(name==='stock'){renderRecipes();renderStockSidebar();}
-  if(name==='entreno'){renderTrnSidebar();renderTrnWeekBar();renderTrnStats();renderTrnEditor();if(trnTabMode==='progress')renderTrnProgress();}
-  else if(name==='ajustes'){_syncKeyStatuses?.();}
+  if(name==='entreno'){renderTrnSidebar();renderTrnWeekBar();renderTrnStats();if(currentRtnId)renderTrnEditor();}
   if(name==='progreso'){loadProgressFromServer().then(()=>{initProgressForm();renderProgress();});}
   if(name==='ejercicios')renderExList();
   if(name==='notas'){
@@ -4130,7 +3170,7 @@ window.toast=(msg)=>{const el=document.getElementById('toast');if(!el){console.l
 function weekKey(){const d=new Date(),j=new Date(d.getFullYear(),0,4);const w=Math.ceil(((d-j)/86400000+j.getDay()+1)/7);return`${d.getFullYear()}-W${String(w).padStart(2,'0')}`;}
 function getDefaultDiet(){return{LUNES:{desayuno:[{p:'avena',qty:70,u:'g'},{p:'leche de soja',qty:200,u:'ml'}],comida:[{p:'patata',qty:300,u:'g'},{p:'merluza',qty:200,u:'g'},{p:'esparragos trigueros',qty:200,u:'g'}],preEntreno:[{p:'scoop proteina',qty:1,u:'ud'},{p:'crema de arroz',qty:50,u:'g'},{p:'platano pequeno',qty:1,u:'ud'}],cena:[{p:'queso fresco batido',qty:200,u:'g'},{p:'arandanos congelados',qty:50,u:'g'},{p:'frambuesas congeladas',qty:50,u:'g'},{p:'yogur natural entero',qty:1,u:'ud'},{p:'huevo entero',qty:1,u:'ud'},{p:'fresas',qty:150,u:'g'}],preCama:[{p:'scoop proteina',qty:1,u:'ud'},{p:'kiwi',qty:1,u:'ud'},{p:'almendras',qty:15,u:'g'}]},MARTES:{desayuno:[{p:'avena',qty:70,u:'g'},{p:'leche de soja',qty:200,u:'ml'}],comida:[{p:'patata',qty:300,u:'g'},{p:'pechuga',qty:200,u:'g'}],preEntreno:[{p:'scoop proteina',qty:1,u:'ud'},{p:'crema de arroz',qty:50,u:'g'},{p:'platano pequeno',qty:1,u:'ud'}],cena:[{p:'queso fresco batido',qty:200,u:'g'},{p:'arandanos congelados',qty:50,u:'g'},{p:'queso cottage light',qty:50,u:'g'},{p:'frambuesas congeladas',qty:50,u:'g'},{p:'yogur natural entero',qty:1,u:'ud'},{p:'huevo entero',qty:1,u:'ud'},{p:'tomate',qty:100,u:'g'}],preCama:[{p:'scoop proteina',qty:1,u:'ud'},{p:'kiwi',qty:1,u:'ud'},{p:'mandarina',qty:1,u:'ud'}]},MIERCOLES:{desayuno:[{p:'avena',qty:70,u:'g'},{p:'leche de soja',qty:200,u:'ml'}],comida:[{p:'arroz integral',qty:80,u:'g'},{p:'atun tarro cristal',qty:150,u:'g'},{p:'esparragos trigueros',qty:200,u:'g'},{p:'lechuga',qty:1,u:'ud'}],preEntreno:[{p:'scoop proteina',qty:1,u:'ud'},{p:'crema de arroz',qty:50,u:'g'},{p:'platano pequeno',qty:1,u:'ud'}],cena:[{p:'queso fresco batido',qty:200,u:'g'},{p:'arandanos congelados',qty:50,u:'g'},{p:'queso cottage light',qty:50,u:'g'},{p:'frambuesas congeladas',qty:50,u:'g'},{p:'yogur natural entero',qty:1,u:'ud'},{p:'huevo entero',qty:1,u:'ud'},{p:'fresas',qty:150,u:'g'}],preCama:[{p:'scoop proteina',qty:1,u:'ud'},{p:'kiwi',qty:1,u:'ud'}]},JUEVES:{desayuno:[{p:'avena',qty:70,u:'g'},{p:'leche de soja',qty:200,u:'ml'}],comida:[{p:'carne de conejo',qty:250,u:'g'},{p:'patata',qty:300,u:'g'},{p:'pimiento tricolor congelado',qty:200,u:'g'}],preEntreno:[{p:'scoop proteina',qty:1,u:'ud'},{p:'crema de arroz',qty:50,u:'g'},{p:'platano pequeno',qty:1,u:'ud'}],cena:[{p:'queso fresco batido',qty:200,u:'g'},{p:'arandanos congelados',qty:50,u:'g'},{p:'frambuesas congeladas',qty:50,u:'g'},{p:'queso cottage light',qty:50,u:'g'},{p:'yogur natural entero',qty:1,u:'ud'},{p:'huevo entero',qty:1,u:'ud'}],preCama:[{p:'scoop proteina',qty:1,u:'ud'},{p:'kiwi',qty:1,u:'ud'},{p:'mandarina',qty:1,u:'ud'}]},VIERNES:{desayuno:[{p:'avena',qty:70,u:'g'},{p:'leche de soja',qty:200,u:'ml'}],comida:[{p:'queso fresco batido',qty:200,u:'g'},{p:'huevo entero',qty:1,u:'ud'},{p:'tomate',qty:100,u:'g'}],preEntreno:[{p:'scoop proteina',qty:1,u:'ud'},{p:'crema de arroz',qty:50,u:'g'},{p:'platano pequeno',qty:1,u:'ud'}],cena:[{p:'queso fresco batido',qty:200,u:'g'},{p:'arandanos congelados',qty:50,u:'g'},{p:'frambuesas congeladas',qty:50,u:'g'},{p:'huevo entero',qty:1,u:'ud'}],preCama:[{p:'scoop proteina',qty:1,u:'ud'},{p:'kiwi',qty:1,u:'ud'}]},SABADO:{desayuno:[{p:'pan integral',qty:2,u:'ud'},{p:'leche de soja',qty:200,u:'ml'},{p:'mandarina',qty:1,u:'ud'}],comida:[{p:'arroz integral',qty:50,u:'g'},{p:'lentejas',qty:150,u:'g'},{p:'espelta',qty:60,u:'g'},{p:'brocoli',qty:200,u:'g'},{p:'mandarina',qty:1,u:'ud'}],preEntreno:[],cena:[{p:'masa pizza integral',qty:1,u:'ud'},{p:'tomate frito',qty:80,u:'g'},{p:'tiras de pollo',qty:100,u:'g'},{p:'mozarella',qty:100,u:'g'}],preCama:[]},DOMINGO:{desayuno:[{p:'pan integral',qty:2,u:'ud'},{p:'leche de soja',qty:200,u:'ml'},{p:'mandarina',qty:1,u:'ud'}],comida:[{p:'filete ternera',qty:180,u:'g'},{p:'patata',qty:300,u:'g'},{p:'espelta',qty:60,u:'g'},{p:'lechuga',qty:1,u:'ud'},{p:'mandarina',qty:1,u:'ud'}],preEntreno:[],cena:[{p:'masa pizza integral',qty:1,u:'ud'},{p:'tomate frito',qty:80,u:'g'},{p:'tiras de pollo',qty:100,u:'g'},{p:'mozarella',qty:100,u:'g'}],preCama:[]}};}
 function getDefaultRecipes(){return[{id:'r1',name:'Avena con leche soja',tags:['desayuno'],notes:'Calentar la leche, añadir la avena y remover 3 minutos a fuego medio-bajo.',items:[{p:'avena',qty:70,u:'g'},{p:'leche de soja',qty:200,u:'ml'}]},{id:'r2',name:'Merluza con patata',tags:['comida'],notes:'Cocer la patata 20 min. Hacer la merluza a la plancha con sal y limón. Los espárragos al vapor 5 min.',items:[{p:'patata',qty:300,u:'g'},{p:'merluza',qty:200,u:'g'},{p:'esparragos trigueros',qty:200,u:'g'}]},{id:'r3',name:'Bowl proteico nocturno',tags:['cena'],notes:'Mezclar el queso batido con el yogur. Añadir las frutas y el huevo cocido. Consumir frío.',items:[{p:'queso fresco batido',qty:200,u:'g'},{p:'arandanos congelados',qty:50,u:'g'},{p:'frambuesas congeladas',qty:50,u:'g'},{p:'yogur natural entero',qty:1,u:'ud'},{p:'huevo entero',qty:1,u:'ud'}]},{id:'r4',name:'Pre-entreno arroz',tags:['preEntreno'],notes:'Preparar la crema de arroz con agua caliente. Mezclar la proteína con agua fría aparte. Tomar 30 min antes del entreno.',items:[{p:'scoop proteina',qty:1,u:'ud'},{p:'crema de arroz',qty:50,u:'g'},{p:'platano pequeno',qty:1,u:'ud'}]},{id:'r5',name:'Pizza integral pollo',tags:['cena'],notes:'Extender el tomate frito sobre la masa. Añadir el pollo en tiras y cubrir con mozzarella. Horno a 200°C durante 12-15 minutos.',items:[{p:'masa pizza integral',qty:1,u:'ud'},{p:'tomate frito',qty:80,u:'g'},{p:'tiras de pollo',qty:100,u:'g'},{p:'mozarella',qty:100,u:'g'}]}];}
-function getDefaultRoutines(){return[{id:'dr1',name:'Pecho + Tríceps',muscles:['Pecho','Tríceps'],client_id:currentClientId,coach_id:currentUser.id,exercises:[{id:'dr1e1',name:'Press banca plano',note:'Aumentar peso si completas todas las reps',sets:[{reps:10,weight:'',time:''},{reps:10,weight:'',time:''},{reps:10,weight:'',time:''}],rpe:0},{id:'dr1e2',name:'Press inclinado mancuernas',note:'',sets:[{reps:12,weight:'',time:''},{reps:12,weight:'',time:''},{reps:12,weight:'',time:''}],rpe:0},{id:'dr1e3',name:'Fondos en paralelas',note:'',sets:[{reps:12,weight:'',time:''},{reps:12,weight:'',time:''},{reps:12,weight:'',time:''}],rpe:0},{id:'dr1e4',name:'Extensiones tríceps polea',note:'',sets:[{reps:15,weight:'',time:''},{reps:15,weight:'',time:''},{reps:15,weight:'',time:''}],rpe:0}]},{id:'dr2',name:'Pierna',muscles:['Piernas','Glúteos'],client_id:currentClientId,coach_id:currentUser.id,exercises:[{id:'dr2e1',name:'Sentadilla barra',note:'Prioridad del día',sets:[{reps:8,weight:'',time:''},{reps:8,weight:'',time:''},{reps:8,weight:'',time:''},{reps:8,weight:'',time:''}],rpe:0},{id:'dr2e2',name:'Prensa 45°',note:'',sets:[{reps:12,weight:'',time:''},{reps:12,weight:'',time:''},{reps:12,weight:'',time:''}],rpe:0},{id:'dr2e3',name:'Curl femoral tumbado',note:'',sets:[{reps:15,weight:'',time:''},{reps:15,weight:'',time:''},{reps:15,weight:'',time:''}],rpe:0},{id:'dr2e4',name:'Elevaciones gemelos',note:'Rango completo',sets:[{reps:20,weight:'',time:''},{reps:20,weight:'',time:''},{reps:20,weight:'',time:''},{reps:20,weight:'',time:''}],rpe:0}]}];}
+function getDefaultRoutines(){const _mkId=(s)=>s.padEnd(8,'0')+'-0000-4000-8000-000000000000';return[{id:_mkId('dr1pecho'),name:'Pecho + Tríceps',muscles:['Pecho','Tríceps'],client_id:currentClientId,coach_id:currentUser.id,exercises:[{id:'dr1e1',name:'Press banca plano',note:'Aumentar peso si completas todas las reps',sets:[{reps:10,weight:'',time:''},{reps:10,weight:'',time:''},{reps:10,weight:'',time:''}],rpe:0},{id:'dr1e2',name:'Press inclinado mancuernas',note:'',sets:[{reps:12,weight:'',time:''},{reps:12,weight:'',time:''},{reps:12,weight:'',time:''}],rpe:0},{id:'dr1e3',name:'Fondos en paralelas',note:'',sets:[{reps:12,weight:'',time:''},{reps:12,weight:'',time:''},{reps:12,weight:'',time:''}],rpe:0},{id:'dr1e4',name:'Extensiones tríceps polea',note:'',sets:[{reps:15,weight:'',time:''},{reps:15,weight:'',time:''},{reps:15,weight:'',time:''}],rpe:0}]},{id:_mkId('dr2pierna'),name:'Pierna',muscles:['Piernas','Glúteos'],client_id:currentClientId,coach_id:currentUser.id,exercises:[{id:'dr2e1',name:'Sentadilla barra',note:'Prioridad del día',sets:[{reps:8,weight:'',time:''},{reps:8,weight:'',time:''},{reps:8,weight:'',time:''},{reps:8,weight:'',time:''}],rpe:0},{id:'dr2e2',name:'Prensa 45°',note:'',sets:[{reps:12,weight:'',time:''},{reps:12,weight:'',time:''},{reps:12,weight:'',time:''}],rpe:0},{id:'dr2e3',name:'Curl femoral tumbado',note:'',sets:[{reps:15,weight:'',time:''},{reps:15,weight:'',time:''},{reps:15,weight:'',time:''}],rpe:0},{id:'dr2e4',name:'Elevaciones gemelos',note:'Rango completo',sets:[{reps:20,weight:'',time:''},{reps:20,weight:'',time:''},{reps:20,weight:'',time:''},{reps:20,weight:'',time:''}],rpe:0}]}];}
 
 // ══════════════════════════════════════════════════════
 //  PROGRESS / MEDIDAS MODULE
@@ -4735,25 +3775,6 @@ function renderWeightLog(){
 // ── BOOT ──
 document.getElementById('gif-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeGifModal(); });
 boot();
-
-// ── THEME TOGGLE ──
-function applyTheme(light){
-  document.body.classList.toggle('light', light);document.documentElement.classList.toggle('light', light);
-  const icon = document.getElementById('theme-icon');
-  const lbl  = document.getElementById('theme-label');
-  if(icon) icon.textContent = light ? '🌙' : '☀️';
-  if(lbl)  lbl.textContent  = light ? 'Modo noche' : 'Modo día';
-  try { localStorage.setItem('efk-theme', light ? 'light' : 'dark'); } catch(e){}
-}
-window.toggleTheme = () => applyTheme(!document.body.classList.contains('light'));
-
-// Apply saved theme immediately (before DOMContentLoaded to avoid flash)
-(function(){
-  try {
-    const saved = localStorage.getItem('efk-theme');
-    if(saved === 'light'){document.body.classList.add('light');document.documentElement.classList.add('light');}
-  } catch(e){}
-})();
 </script>
 <div id="toast"></div>
 </body>

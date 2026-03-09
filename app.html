@@ -1664,14 +1664,25 @@ async function loadClientData(clientId) {
 
   DIET     = dietRes.data?.diet_json || getDefaultDiet();
   ROUTINES = (routinesRes.data||[]).map(r => ({...r, exercises: r.exercises || [], muscles: r.muscles || []}));
-  console.log('[DEBUG] Routines loaded:', ROUTINES.length, 'role:', currentProfile.role);
-  // If client got no routines, the RLS policy is blocking — show clear error
-  if (ROUTINES.length === 0 && currentProfile.role === 'client') {
-    console.warn('[DEBUG] Client got 0 routines. RLS may be blocking. coach_id:', currentProfile.coach_id);
-    toast('⚠ No se ven rutinas. Pide al entrenador que ejecute el SQL de permisos en Supabase.');
+  console.log('[DEBUG] Routines loaded from DB:', ROUTINES.length, 'role:', currentProfile.role);
+  // Parse schedule — may contain embedded snapshots: {LUN: {rid, snapshot}, ...} or legacy strings
+  const rawSched = schedRes.data?.schedule || {};
+  SCHEDULE = {};
+  const _snapshotRoutines = {}; // id -> routine, rebuilt from snapshots
+  Object.entries(rawSched).forEach(([day, val]) => {
+    if (typeof val === 'string') {
+      SCHEDULE[day] = val; // legacy: plain routine id
+    } else if (val && typeof val === 'object' && val.rid) {
+      SCHEDULE[day] = val.rid; // new format: extract rid
+      if (val.snapshot) _snapshotRoutines[val.snapshot.id] = { ...val.snapshot, exercises: val.snapshot.exercises||[], muscles: val.snapshot.muscles||[] };
+    }
+  });
+  // If client has 0 routines from DB, rebuild from snapshots embedded in schedule
+  if (ROUTINES.length === 0 && Object.keys(_snapshotRoutines).length > 0) {
+    ROUTINES = Object.values(_snapshotRoutines);
+    console.log('[DEBUG] Rebuilt', ROUTINES.length, 'routines from schedule snapshots');
   }
-  SCHEDULE = schedRes.data?.schedule || {};
-  console.log('[DEBUG] Schedule loaded:', Object.keys(SCHEDULE).length, 'days assigned', JSON.stringify(SCHEDULE));
+  console.log('[DEBUG] Schedule:', Object.keys(SCHEDULE).length, 'days. Routines:', ROUTINES.length);
   STOCK    = stockRes.data?.stock_json || {};
   personalNotes   = notesRes.data?.personal_notes || '';
   coachFeedback   = notesRes.data?.coach_feedback  || '';
@@ -1815,6 +1826,7 @@ async function saveDBToServer() {
 async function saveRoutinesToServer() {
   if (!currentClientId) return;
   const coachId = currentProfile.role === 'coach' ? currentUser.id : currentProfile.coach_id;
+  // Save routines table (coach access)
   const rows = ROUTINES.map(r => ({
     id: r.id, client_id: currentClientId, coach_id: coachId,
     name: r.name, muscles: r.muscles, exercises: r.exercises,
@@ -1824,9 +1836,19 @@ async function saveRoutinesToServer() {
     const { error: rErr } = await sb.from('routines').upsert(rows, { onConflict: 'id', ignoreDuplicates: false });
     if (rErr) console.warn('routines upsert:', rErr.message);
   }
+  // Build schedule with embedded routine snapshots so client can read without routines RLS
+  const schedWithSnapshots = {};
+  Object.entries(SCHEDULE).forEach(([day, val]) => {
+    const rid = typeof val === 'object' ? val.rid : val;
+    if (!rid) return;
+    const r = getRtn(rid);
+    schedWithSnapshots[day] = r
+      ? { rid, snapshot: { id: r.id, name: r.name, muscles: r.muscles||[], exercises: r.exercises||[] } }
+      : { rid };
+  });
   const { error: sErr } = await sb.from('week_schedules').upsert({
     client_id: currentClientId, coach_id: coachId,
-    schedule: SCHEDULE, updated_at: new Date().toISOString()
+    schedule: schedWithSnapshots, updated_at: new Date().toISOString()
   }, { onConflict: 'client_id' });
   if (sErr) console.warn('week_schedules upsert:', sErr.message);
   flash();
@@ -2699,7 +2721,19 @@ window.closeGifModal = () => {
 // ══════════════════════════════════════════════════════
 const DAY_NAMES = {LUN:'Lunes',MAR:'Martes',MIE:'Miércoles',JUE:'Jueves',VIE:'Viernes',SAB:'Sábado',DOM:'Domingo'};
 
-function getRtn(id){return ROUTINES.find(r=>r.id===id);}
+function getRtn(id){
+  if(!id) return null;
+  let r = ROUTINES.find(r=>r.id===id);
+  if(r) return r;
+  // Fallback: look in schedule snapshots (for clients whose routines RLS is blocked)
+  for(const day of DAY_LABELS){
+    if(SCHEDULE[day]===id){
+      // Already in ROUTINES if snapshot was loaded — this is just a safety net
+      break;
+    }
+  }
+  return null;
+}
 function getTodayLabel(){const d=new Date().getDay();return DAY_LABELS[[6,0,1,2,3,4,5][d]];}
 
 // ── Logs keyed by day label (LUN, MAR...) — never by routine id ──
@@ -2780,7 +2814,7 @@ function renderTrnWeekBar(){
     const log=getDayLog(day), isDone=log.done;
     const isToday=day===today, isRest=!rid, isSel=day===currentDay;
     const cls=['twd',isRest?'rest':'',isDone?'done':'',isToday&&!isRest?'today':'',isSel?'selected':''].filter(Boolean).join(' ');
-    const icon=isDone?'✅':isRest?'—':isToday?'🏋️':'⬜';
+    const icon=isDone?'✅':isRest?'—':'🏋️';
     return`<div class="${cls}" onclick="selectDay('${day}')">
       <div class="twd-day">${day}</div>
       <div class="twd-icon">${icon}</div>
@@ -3082,7 +3116,17 @@ window.toggleSetDone=async(day,exId,si)=>{
     row.classList.toggle('set-done',s.done);
     row.querySelectorAll('.set-inp').forEach(i=>i.classList.toggle('done-val',s.done));
   }
-  if(s.done) startRestTimer(90);
+  if(s.done){
+    // Get rest time: logged value > template value > nothing
+    const timeRaw = s.time || (()=>{
+      const r=getRtn(SCHEDULE[day]);
+      return r?.exercises?.find(e=>e.id===exId)?.sets?.[si]?.time || '';
+    })();
+    const secs = parseTimeSecs(timeRaw);
+    if(secs > 0) startRestTimer(secs);
+  } else {
+    stopRestTimer();
+  }
   await saveTrainingLog(day);
   renderTrnStats();
 };
@@ -3103,6 +3147,25 @@ window.markDayDone=async(day,done)=>{
 window.markRtnDone=window.markDayDone;
 
 // ── REST TIMER ──
+// Parsea: "90" → 90s, "1:30" → 90s, "2:00" → 120s, "2m" → 120s, "30s" → 30s
+function parseTimeSecs(raw){
+  if(!raw) return 0;
+  const s = String(raw).trim().toLowerCase();
+  if(!s || s==='-' || s==='—') return 0;
+  // mm:ss
+  const mmsс = s.match(/^(\d+):(\d{2})$/);
+  if(mmsс) return parseInt(mmsс[1])*60 + parseInt(mmsс[2]);
+  // Xm or Xmin
+  const min = s.match(/^(\d+)\s*m(in)?$/);
+  if(min) return parseInt(min[1])*60;
+  // Xs or Xseg
+  const sec = s.match(/^(\d+)\s*s(eg)?$/);
+  if(sec) return parseInt(sec[1]);
+  // plain number → seconds
+  const n = parseFloat(s);
+  if(!isNaN(n) && n > 0) return Math.round(n);
+  return 0;
+}
 let _restInterval=null;
 function startRestTimer(secs){
   stopRestTimer();

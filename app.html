@@ -1659,7 +1659,7 @@ async function switchClient(clientId) {
   renderCompra();
   loadProgressFromServer().then(()=>renderProgress());
   renderVitamins();
-  toast('✓ Cliente: ' + clientName);
+  toast('✓ ' + (isSelf ? 'Viendo tus datos' : selectedText));
 }
 
 async function loadExLibrary() {
@@ -1743,11 +1743,20 @@ async function saveRoutinesToServer() {
 async function saveTrainingLog(routineId) {
   if (!currentClientId) return;
   const log = (TRN_LOG[THIS_WEEK]||{})[routineId] || {};
-  await sb.from('training_logs').upsert({
+  const { error } = await sb.from('training_logs').upsert({
     client_id: currentClientId, routine_id: routineId, week_key: THIS_WEEK,
     exercises: log.exercises || {}, completed: log.done || false,
     logged_at: new Date().toISOString()
   }, { onConflict: 'client_id,routine_id,week_key' });
+  if (error) {
+    console.error('saveTrainingLog error:', error.message, error.code);
+    if (error.code === '42501') {
+      toast('⚠ Sin permisos para guardar. Ejecuta el SQL de migración en Supabase.');
+    } else {
+      toast('⚠ Error guardando entreno: ' + error.message);
+    }
+    return;
+  }
   flash();
 }
 
@@ -2622,7 +2631,7 @@ function renderTrnEditor(){
   const coach=isCoachView();
   // Coach can log their own workouts (when viewing self)
   const selfTraining = isCoachView() && currentClientId === currentUser.id;
-  const canLog = !coach || selfTraining;
+  const canLog = true; // both coach and clients can always log
   const muscleChips=MUSCLES_LIST.map(m=>`<span class="mchip ${(r.muscles||[]).includes(m)?'on':''}" ${coach?`onclick="toggleMuscle('${r.id}','${m}')"`:'style="cursor:default"'}>${m}</span>`).join('');
   const exBlocks=(r.exercises||[]).map((ex,ei)=>renderExBlock(r.id,ex,ei,log,coach,canLog)).join('');
   const isDone=log.done;
@@ -2674,7 +2683,7 @@ function renderExBlock(rid,ex,ei,log,coach,canLog=false){
     </div>
     <input class="ex-note-inp" type="text" value="${ex.note||''}" placeholder="${coach?'Nota técnica...':'Nota del entrenador'}" ${coach?`onchange="updateExNote('${rid}',${ei},this.value)"`:' readonly'}>
     <div class="exsets">
-      <div class="sets-hdr"><span>#</span><span>Peso(kg)</span><span>Reps</span><span>Tiempo</span><span>${coach?'Plan':'✓'}</span><span></span></div>
+      <div class="sets-hdr"><span>#</span><span>Peso(kg)</span><span>Reps</span><span>Tiempo</span><span>✓</span><span></span></div>
       <div id="sets-${rid}-${ex.id}">${setsHtml}</div>
     </div>
     ${(canLog||!coach)?`<div class="rpe-row"><span class="rpe-lbl">RPE:</span>${rpeBtns}</div>`:''}

@@ -21,3 +21,5 @@ Testear
 -Modificar contraseña desde el perfil
 -Web chequear las fotos del perfil
 -Testear que todos los datos son correctos
+
+Documentar

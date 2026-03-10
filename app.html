@@ -3571,11 +3571,22 @@ window.createClientAccount = async () => {
   log.textContent = '⏳ Creando cuenta...'; log.style.color = 'var(--muted2)';
 
   try {
-    const { data: result, error: fnErr2 } = await sb.functions.invoke('create-client', {
-      body: { email, password: pass, full_name: name }
+    const { data: { session: _sess2 } } = await sb.auth.getSession();
+    const _token2 = _sess2?.access_token;
+    if (!_token2) throw new Error('No hay sesión activa. Recarga la página.');
+    const _res2 = await fetch(`${SUPABASE_URL}/functions/v1/create-client`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${_token2}`,
+        'apikey': SUPABASE_ANON,
+      },
+      body: JSON.stringify({ email, password: pass, full_name: name })
     });
-    if (fnErr2) throw new Error(fnErr2.message || String(fnErr2));
-    if (result?.error) throw new Error(result.error);
+    const _resText2 = await _res2.text();
+    let result;
+    try { result = JSON.parse(_resText2); } catch { throw new Error(`Respuesta inválida: ${_resText2.slice(0,200)}`); }
+    if (!_res2.ok || result?.error) throw new Error(result?.error || `HTTP ${_res2.status}: ${_resText2.slice(0,200)}`);
 
     log.innerHTML = `✅ Cliente creado: <strong>${name}</strong> · ${email} · pass: <code>${pass}</code>`;
     log.style.color = 'var(--accent)';
@@ -3630,11 +3641,24 @@ window.runAiPriceUpdate = async () => {
   try {
     const productList = products;
 
-    // Use sb.functions.invoke — handles session JWT automatically, avoids 401
-    const { data, error: fnErr } = await sb.functions.invoke('ai-prices', {
-      body: { products: productList }
+    // Call edge function with full error detail
+    const { data: { session: _sess } } = await sb.auth.getSession();
+    const _token = _sess?.access_token;
+    if (!_token) throw new Error('No hay sesión activa. Recarga la página.');
+    const _res = await fetch(`${SUPABASE_URL}/functions/v1/ai-prices`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${_token}`,
+        'apikey': SUPABASE_ANON,
+      },
+      body: JSON.stringify({ products: productList })
     });
-    if (fnErr) throw new Error(fnErr.message || String(fnErr));
+    const _resText = await _res.text();
+    log(`📡 HTTP ${_res.status} · ${_resText.slice(0,300)}`);
+    let data;
+    try { data = JSON.parse(_resText); } catch { throw new Error(`Respuesta inválida (${_res.status}): ${_resText.slice(0,300)}`); }
+    if (!_res.ok) throw new Error(data?.error || data?.detail || data?.message || `HTTP ${_res.status}: ${_resText.slice(0,300)}`);
     if (data?.error) throw new Error(data.error);
 
     // Edge function returns raw Anthropic response: { content: [{type:'text', text:'...'}] }

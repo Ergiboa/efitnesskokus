@@ -39,6 +39,7 @@ function recMacBar(items) {
 }
 
 function renderRecipeEditor(){
+  const canEditRecipe = isCoachView();
   const area=document.getElementById('recipe-editor-area');
   if(!currentRecipeId){
     area.innerHTML=`<div style="background:var(--card);border:1px solid var(--border);border-radius:9px;padding:14px;min-height:200px;display:flex;align-items:center;justify-content:center;color:var(--muted2);font-family:'Syne',sans-serif">Selecciona o crea una receta</div>`;

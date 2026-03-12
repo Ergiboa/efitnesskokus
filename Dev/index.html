@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>try{if(localStorage.getItem('efk-theme')==='light')document.documentElement.classList.add('light')}catch(e){}</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Efitnesskokus</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<!-- CSS Modules -->
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/panels.css">
+</head>
+<body>
+
+<!-- App Loading -->
+<div id="app-loading">
+  <div class="load-mark">NC</div>
+  <span id="load-text">Iniciando Efitnesskokus...</span>
+</div>
+
+<!-- Autocomplete dropdown (shared) -->
+<div id="ac-drop"></div>
+
+<!-- GIF Modal -->
+<div id="gif-modal">
+  <div class="gif-card">
+    <div class="gif-visual">
+      <button class="gif-close" onclick="closeGifModal()">✕</button>
+      <div id="gif-visual-wrap">
+        <div class="gif-visual-ph"><span style="font-size:38px">🏋️</span><span>Cargando...</span></div>
+      </div>
+    </div>
+    <div class="gif-info-panel">
+      <div class="gif-ex-name" id="gif-name"></div>
+      <div class="gif-tags" id="gif-tags"></div>
+      <div class="gif-tips" id="gif-tips"></div>
+      <button class="btn ghost sm" onclick="closeGifModal()" style="margin-top:auto;justify-content:center">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark" style="font-size:11px;letter-spacing:-1px">EK</div>
+    <div class="sb-brand"><h1>Efitnesskokus</h1><small id="sidebar-client-name">—</small></div>
+  </div>
+
+  <!-- Client selector (coach only) -->
+  <div id="client-selector" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
+      <div class="cs-label" style="margin-bottom:0">Cliente activo</div>
+      <button onclick="openNewClientModal()" title="Crear nuevo cliente"
+        style="background:var(--accent);color:#08090a;border:none;border-radius:5px;padding:3px 8px;font-family:'Syne',sans-serif;font-weight:700;font-size:10px;cursor:pointer;white-space:nowrap">
+        ＋ Nuevo
+      </button>
+    </div>
+    <select class="cs-select" id="client-select" onchange="switchClient(this.value)">
+      <option value="">— Selecciona cliente —</option>
+    </select>
+  </div>
+
+  <nav class="sb-nav">
+    <!-- Resumen + Notas submenu -->
+    <div class="nav-item active has-sub" data-tab="resumen" onclick="navItemClick(this,event)">
+      <span class="nav-icon">📊</span>Resumen<span class="nav-chevron" id="chev-resumen">▸</span>
+    </div>
+    <div class="nav-submenu" id="sub-resumen">
+      <div class="nav-sub-item" data-tab="notas" onclick="navSubClick(this)"><span class="nav-icon" style="font-size:12px">📝</span>Notas</div>
+    </div>
+
+    <!-- Dieta + Recetas + Nutrición DB submenu -->
+    <div class="nav-item has-sub" data-tab="dieta" onclick="navItemClick(this,event)">
+      <span class="nav-icon">✏️</span>Dieta<span class="nav-chevron" id="chev-dieta">▸</span>
+    </div>
+    <div class="nav-submenu" id="sub-dieta">
+      <div class="nav-sub-item" data-tab="recetas" onclick="navSubClick(this)"><span class="nav-icon" style="font-size:12px">📖</span>Recetas</div>
+      <div class="nav-sub-item" data-tab="db" onclick="navSubClick(this)"><span class="nav-icon" style="font-size:12px">🗄</span>Nutrición DB</div>
+    </div>
+
+    <div class="nav-item" data-tab="entreno" onclick="navItemClick(this,event)"><span class="nav-icon">💪</span>Entreno</div>
+
+    <!-- Logística group -->
+    <div class="nav-sep" style="margin:8px 8px 5px"></div>
+    <div class="nav-group-lbl">Logística</div>
+    <div class="nav-item" data-tab="compra" onclick="navItemClick(this,event)"><span class="nav-icon">🛒</span>Compra</div>
+    <div class="nav-item" data-tab="stock" onclick="navItemClick(this,event)"><span class="nav-icon">📦</span>Stock</div>
+
+    <!-- Chat -->
+    <div class="nav-item" data-tab="chat" onclick="navItemClick(this,event)"><span class="nav-icon">💬</span>Chat<span id="chat-unread-badge" style="display:none;margin-left:auto;background:var(--red,#f55);color:#fff;font-size:9px;font-family:'Syne',sans-serif;font-weight:800;padding:1px 6px;border-radius:10px;min-width:16px;text-align:center">0</span></div>
+
+    <!-- Perfil (includes Progreso) -->
+    <div class="nav-sep" style="margin:8px 8px 5px"></div>
+    <div class="nav-item" data-tab="perfil" onclick="navItemClick(this,event)"><span class="nav-icon">👤</span>Mi perfil</div>
+
+    <!-- Coach-only: GIF Library (hidden from clients) -->
+    <div class="nav-item coach-only-nav" id="nav-giflib" data-tab="ejercicios" style="display:none" onclick="navItemClick(this,event)"><span class="nav-icon">🎬</span>Librería GIFs</div>
+    <!-- Coach-only: Ajustes -->
+    <div class="nav-item coach-only-nav" id="nav-ajustes" data-tab="ajustes" style="display:none" onclick="navItemClick(this,event)"><span class="nav-icon">⚙️</span>Ajustes</div>
+  </nav>
+
+  <div class="sb-bottom">
+    <div class="sb-status">
+      <div id="autosave-dot"></div>
+      <div id="price-status-sidebar">💰 Precios...</div>
+    </div>
+    <button id="theme-toggle" onclick="toggleTheme()" style="
+      width:100%;background:none;border:1px solid var(--border);border-radius:7px;
+      color:var(--muted2);padding:7px 12px;cursor:pointer;font-family:'Syne',sans-serif;
+      font-weight:700;font-size:11px;display:flex;align-items:center;gap:8px;
+      margin-bottom:6px;transition:all .15s;
+    " onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'"
+       onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted2)'">
+      <span id="theme-icon">☀️</span><span id="theme-label">Modo día</span>
+    </button>
+    
+    <div class="sb-user" onclick="confirmLogout()">
+      <div class="sb-avatar" id="sb-avatar">?</div>
+      <div style="flex:1;min-width:0">
+        <div class="sb-user-name" id="sb-username">—</div>
+        <div class="sb-user-role" id="sb-role">—</div>
+      </div>
+      <button class="sb-logout" title="Cerrar sesión">⏻</button>
+    </div>
+  </div>
+</div>
+
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- MAIN CONTENT -->
+<div class="app-main">
+  <!-- Mobile header -->
+  <div id="mobile-header">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <span class="mob-title">Efitnesskokus</span>
+    <span class="mob-client" id="mob-client-label">—</span>
+  </div>
+
+  <!-- RESUMEN -->
+  <div id="panel-resumen" class="panel active">
+    <div class="macro-grid">
+      <div class="macro-card mc-kcal"><div class="lbl">Kcal media/día</div><div class="val" id="s-kcal">—</div><div class="unit">kcal</div></div>
+      <div class="macro-card mc-prot"><div class="lbl">Proteína media</div><div class="val" id="s-prot">—</div><div class="unit">g/día</div></div>
+      <div class="macro-card mc-carb"><div class="lbl">Carbs media</div><div class="val" id="s-carb">—</div><div class="unit">g/día</div></div>
+      <div class="macro-card mc-fat"><div class="lbl">Grasa media</div><div class="val" id="s-fat">—</div><div class="unit">g/día</div></div>
+      <div class="macro-card mc-fib"><div class="lbl">Fibra media</div><div class="val" id="s-fib">—</div><div class="unit">g/día</div></div>
+    </div>
+    <div id="miss-alerts"></div>
+    <div class="sec">Macros por día</div>
+    <div class="table-scroll" id="daily-table-wrap"></div>
+    <div class="sec" style="margin-top:14px">🧬 Vitaminas y Minerales <span style="font-size:9px;color:var(--muted2);font-family:'JetBrains Mono',monospace;font-weight:400">(media diaria vs RDA)</span></div>
+    <div id="vitamins-panel"></div>
+  </div>
+
+  <!-- DIETA -->
+  <div id="panel-dieta" class="panel">
+    <div id="diet-locked-notice" class="diet-locked-notice" style="display:none">
+      🔒 El plan de dieta lo gestiona tu entrenador. Solo puedes visualizarlo.
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;flex-wrap:wrap;gap:7px">
+      <div class="sec" style="margin-bottom:0;flex:1">Plan semanal</div>
+      <div id="diet-edit-btns" style="display:flex;gap:5px">
+        <button class="btn ghost sm" onclick="addDietDay()">+ Día</button>
+        <button class="btn ghost sm" onclick="resetDietToDefault()">↺ Restaurar</button>
+        <button class="btn sm" onclick="saveDietToServer()">💾 Guardar</button>
+      </div>
+    </div>
+    <div id="diet-week-grid"></div>
+  </div>
+
+  <!-- RECETAS -->
+  <div id="panel-recetas" class="panel">
+    <div class="sec">Banco de recetas</div>
+    <div style="display:grid;grid-template-columns:220px 1fr;gap:11px;align-items:start" id="recipes-layout">
+      <div id="recipe-list-panel" style="background:var(--card);border:1px solid var(--border);border-radius:9px;overflow:hidden">
+        <div style="padding:9px 12px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:11px">Recetas (<span id="recipe-count">0</span>)</span>
+          <span id="recipe-new-btn-wrap"></span>
+        </div>
+        <div id="recipe-list-body" style="max-height:calc(100vh - 200px);overflow-y:auto"></div>
+      </div>
+      <div id="recipe-editor-area">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:9px;padding:14px;min-height:200px;display:flex;align-items:center;justify-content:center;color:var(--muted2);font-family:'Syne',sans-serif">Selecciona o crea una receta</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DB -->
+  <div id="panel-db" class="panel">
+    <div class="sec">Base de datos nutricional</div>
+    <div class="toolbar">
+      <input type="text" id="db-search" placeholder="Buscar producto..." oninput="renderDB()">
+      <span id="db-coach-btns">
+        <button class="btn" onclick="addDBRow()">+ Añadir</button>
+        <button class="btn ghost" onclick="exportJ('db')">↓ Export</button>
+        <button class="btn ghost sm" onclick="saveDBToServer()">💾 Guardar todo</button>
+      </span>
+    </div>
+    <div class="table-scroll">
+      <table><thead><tr><th>Producto</th><th>Base</th><th>kcal</th><th>Prot</th><th>Carbs</th><th>Grasa</th><th>Fibra</th><th></th><th></th></tr></thead>
+      <tbody id="db-body"></tbody></table>
+    </div>
+
+    <!-- VITAMINAS / MICRONUTRIENTES -->
+    <div style="margin-top:22px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div class="sec" style="margin-bottom:0">🧬 Micronutrientes por ingrediente</div>
+        <button class="btn ghost sm" onclick="toggleMicrosPanel()" id="btn-toggle-micros">👁 Mostrar vitaminas</button>
+        <button class="btn ghost sm" onclick="addMicrosRow()" id="btn-add-micros" style="display:none" class="coach-only-el">+ Añadir producto</button>
+      </div>
+      <div id="micros-panel" style="display:none">
+        <p style="font-size:11px;color:var(--muted2);margin-bottom:8px">Valores por 100g/ml/ud. Edita directamente en la tabla.</p>
+        <div class="toolbar" style="margin-bottom:8px">
+          <input type="text" id="micros-search" placeholder="Buscar..." oninput="renderMicrosTable()" style="max-width:200px">
+        </div>
+        <div class="table-scroll">
+          <table id="micros-table">
+            <thead><tr>
+              <th>Producto</th>
+              <th title="Vitamina A (µg)">Vit A</th>
+              <th title="Vitamina C (mg)">Vit C</th>
+              <th title="Vitamina D (µg)">Vit D</th>
+              <th title="Vitamina E (mg)">Vit E</th>
+              <th title="Vitamina K (µg)">Vit K</th>
+              <th title="B1 Tiamina (mg)">B1</th>
+              <th title="B2 Riboflavina (mg)">B2</th>
+              <th title="B3 Niacina (mg)">B3</th>
+              <th title="B6 (mg)">B6</th>
+              <th title="B12 (µg)">B12</th>
+              <th title="Folato B9 (µg)">Fol</th>
+              <th title="Calcio (mg)">Ca</th>
+              <th title="Hierro (mg)">Fe</th>
+              <th title="Zinc (mg)">Zn</th>
+              <th title="Magnesio (mg)">Mg</th>
+              <th title="Potasio (mg)">K</th>
+              <th></th>
+            </tr></thead>
+            <tbody id="micros-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPRA -->
+  <div id="panel-compra" class="panel">
+    <!-- Compra controls -->
+    <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px;flex-wrap:wrap" class="no-print">
+      <button class="btn ghost xs" onclick="window.print()" title="Imprimir">🖨 Imprimir</button>
+      <button class="btn ghost xs" onclick="resetChecked()">↺ Reset</button>
+      <button class="btn sm" id="btn-merc-fetch" onclick="fetchMercadonaPrices()" title="Busca precios reales en tienda.mercadona.es">
+        🟢 Precios Mercadona
+      </button>
+      <div id="merc-fetch-status" style="font-size:10px;color:var(--muted2);font-family:'JetBrains Mono',monospace"></div>
+      <button class="btn ghost xs" onclick="openPriceEditor()" style="margin-left:auto">✏️ Editar precios</button>
+    </div>
+    <!-- Totals per supermarket -->
+    <div class="price-total-bar" id="price-total-bar">
+      <div class="price-box"><div class="pb-label">💰 Mejor total</div><div class="pb-val" id="total-global">—</div></div>
+      <div class="price-box"><div class="pb-label">🟢 Mercadona</div><div class="pb-val" id="total-merc" style="color:var(--accent)">—</div></div>
+      <div class="price-box"><div class="pb-label">🔵 Lidl</div><div class="pb-val" id="total-lidl" style="color:var(--accent2)">—</div></div>
+      <div class="price-box"><div class="pb-label">🔷 Carrefour</div><div class="pb-val" id="total-carrefour" style="color:var(--blue)">—</div></div>
+      <div class="price-box"><div class="pb-label">🟠 Dia</div><div class="pb-val" id="total-dia" style="color:var(--orange)">—</div></div>
+      <div class="price-box"><div class="pb-label">🟣 Eroski</div><div class="pb-val" id="total-eroski" style="color:var(--purple)">—</div></div>
+    </div>
+    <!-- Filter -->
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:9px;flex-wrap:wrap" class="no-print">
+      <div class="compra-filter">
+        <span style="font-size:11px">🔍</span>
+        <select id="super-dropdown" onchange="onSuperDropdown(this.value)"
+          style="flex:1;background:transparent;border:none;color:var(--text);font-family:'Syne',sans-serif;font-weight:700;font-size:11px;outline:none;cursor:pointer">
+          <option value="all">Todos los supermercados</option>
+          <option value="merc">🟢 Solo Mercadona</option>
+          <option value="lidl">🔵 Solo Lidl</option>
+          <option value="carrefour">🔷 Solo Carrefour</option>
+          <option value="dia">🟠 Solo Dia</option>
+          <option value="eroski">🟣 Solo Eroski</option>
+          <option value="pendientes">⚠ Sin precio</option>
+        </select>
+      </div>
+      <label style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted2);cursor:pointer">
+        <input type="checkbox" id="chk-solo-falta" onchange="renderCompra()" style="accent-color:var(--accent)">
+        Solo lo que falta
+      </label>
+    </div>
+    <div class="table-scroll">
+      <table><thead><tr>
+        <th>✓</th><th>Producto</th><th>Dieta/sem</th><th>Stock</th><th>Necesito</th>
+        <th>🟢Merc</th><th>🔵Lidl</th><th>🔷Carref</th><th>🟠Dia</th><th>🟣Eroski</th>
+        <th>💰 Mejor</th>
+      </tr></thead>
+      <tbody id="compra-body"></tbody></table>
+    </div>
+  </div>
+
+  <!-- STOCK -->
+  <div id="panel-stock" class="panel">
+    <div class="stock-layout">
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;flex-wrap:wrap;gap:5px">
+          <div class="sec" style="margin-bottom:0;flex:1">🍳 Recetas semana</div>
+          <div style="display:flex;gap:4px">
+            <div id="week-badge" style="font-size:10px;padding:3px 8px;background:var(--card);border:1px solid var(--border);border-radius:5px;color:var(--muted2)"></div>
+            <button class="btn danger sm" onclick="confirmResetWeek()">↺</button>
+          </div>
+        </div>
+        <div id="week-progress"></div>
+        <div id="recipes-grid"></div>
+      </div>
+      <div>
+        <div class="sec" style="margin-bottom:9px">📦 Inventario</div>
+        <input type="text" id="stock-search" placeholder="Buscar..." oninput="renderStockSidebar()"
+          style="width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;margin-bottom:7px">
+        <div id="stock-sidebar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENTRENO -->
+  <div id="panel-entreno" class="panel">
+    <div class="trn-layout">
+      <!-- SIDEBAR -->
+      <div>
+        <div class="trn-sidebar">
+          <div class="trn-sidebar-head">
+            <span>Entrenamiento</span>
+            <button class="btn sm" id="new-routine-btn" onclick="newRoutine()">+ Nueva</button>
+          </div>
+          <div class="trn-tabs">
+            <button class="trn-tab active" id="trnTab-week" onclick="switchTrnTab('week')">Semana</button>
+            <button class="trn-tab"        id="trnTab-program" onclick="switchTrnTab('program')">Programa</button>
+            <button class="trn-tab"        id="trnTab-progress" onclick="switchTrnTab('progress')">Progreso</button>
+          </div>
+          <!-- SEMANA pane: list of days with routine names -->
+          <div id="trn-week-pane" class="week-sched" style="display:block"></div>
+          <!-- PROGRAMA pane: routine list + schedule assignment -->
+          <div id="trn-program-pane" style="display:none">
+            <div class="rtn-list" id="trn-routines-pane"></div>
+            <div style="padding:7px;border-top:1px solid var(--border)">
+              <div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Asignar a días</div>
+              <div id="trn-schedule-pane"></div>
+            </div>
+          </div>
+          <!-- PROGRESO pane: filter -->
+          <div id="trn-progress-pane" style="display:none;padding:8px 10px">
+            <div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Ejercicio</div>
+            <select id="prog-ex-sel" style="width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:5px 7px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;margin-bottom:10px" onchange="renderTrnProgress()">
+              <option value="">— Todos —</option>
+            </select>
+            <div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Semanas</div>
+            <div id="prog-weeks-list" style="font-size:10px;color:var(--muted2);line-height:1.9"></div>
+          </div>
+        </div>
+      </div>
+      <!-- MAIN AREA -->
+      <div class="trn-main">
+        <div class="trn-week-bar" id="trn-week-bar"></div>
+        <div id="trn-editor-area">
+          <div class="trn-empty"><div style="font-size:36px">💪</div><div>Selecciona un día</div></div>
+        </div>
+        <div id="trn-stats-area" style="display:none;margin-top:4px">
+          <div class="sec" style="margin-top:0">📊 Semana actual</div>
+          <div class="stats-grid" id="trn-stats-grid"></div>
+        </div>
+        <div id="trn-progress-area" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+  <!-- REST TIMER -->
+  <div id="rest-timer" class="rest-timer">
+    <div class="rest-timer-label">⏱ Descanso</div>
+    <div class="rest-timer-time" id="rest-timer-time">1:30</div>
+    <span class="rest-timer-skip" onclick="stopRestTimer()">Saltar →</span>
+  </div>
+
+
+  <!-- PROGRESO moved to panel-perfil -->
+  <div id="panel-progreso" class="panel" style="display:none!important"></div>
+
+  <!-- EJERCICIOS / GIF LIBRARY (coach only) -->
+  <div id="panel-ejercicios" class="panel">
+    <div class="sec">Librería de ejercicios con GIFs</div>
+    <div class="ex-library">
+      <div class="ex-list-panel">
+        <div class="ex-list-head">
+          <div class="ex-list-head-row">
+            <span>Ejercicios (<span id="ex-count">0</span>)</span>
+            <button class="btn sm" onclick="newExercise()">+ Nuevo</button>
+          </div>
+          <input type="text" class="ex-search" id="ex-search" placeholder="Buscar por nombre o músculo..." oninput="renderExList()">
+        </div>
+        <div class="ex-list-body" id="ex-list-body"></div>
+      </div>
+      <div id="ex-editor-area">
+        <div class="ex-editor">
+          <div style="padding:14px;display:flex;align-items:center;justify-content:center;min-height:200px;color:var(--muted2);font-family:'Syne',sans-serif">Selecciona un ejercicio o crea uno nuevo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTAS -->
+  <!-- ═══════════════════════════════════════════════════
+       MODAL: CREAR CLIENTE (coach only)
+  ════════════════════════════════════════════════════ -->
+  <div id="modal-new-client" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);align-items:center;justify-content:center">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px 28px 24px;width:min(420px,92vw);box-shadow:0 20px 60px rgba(0,0,0,.5)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px">👤 Nuevo cliente</div>
+        <button onclick="closeNewClientModal()" style="background:none;border:none;color:var(--muted2);font-size:18px;cursor:pointer;padding:2px 6px">✕</button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:13px">
+        <div>
+          <label style="font-size:10px;color:var(--muted2);font-family:'Syne',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Nombre completo *</label>
+          <input id="nc-name" type="text" placeholder="Ej: María García" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:9px 12px;font-size:13px;outline:none;font-family:'JetBrains Mono',monospace">
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--muted2);font-family:'Syne',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Email *</label>
+          <input id="nc-email" type="email" placeholder="cliente@email.com" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:9px 12px;font-size:13px;outline:none;font-family:'JetBrains Mono',monospace">
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--muted2);font-family:'Syne',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Contraseña * <span style="font-weight:400;text-transform:none;letter-spacing:0">(mín. 6 caracteres)</span></label>
+          <input id="nc-pass" type="password" placeholder="Contraseña inicial" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:9px 12px;font-size:13px;outline:none;font-family:'JetBrains Mono',monospace">
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--muted2);font-family:'Syne',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Repetir contraseña *</label>
+          <input id="nc-pass2" type="password" placeholder="Repite la contraseña" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:9px 12px;font-size:13px;outline:none;font-family:'JetBrains Mono',monospace">
+        </div>
+        <div id="nc-error" style="display:none;background:rgba(239,83,80,.12);border:1px solid rgba(239,83,80,.3);border-radius:6px;padding:8px 11px;font-size:11px;color:#ef5350"></div>
+      </div>
+
+      <div style="display:flex;gap:9px;margin-top:20px">
+        <button class="btn ghost" style="flex:1;justify-content:center" onclick="closeNewClientModal()">Cancelar</button>
+        <button class="btn" style="flex:2;justify-content:center" id="nc-submit-btn" onclick="submitNewClient()">✓ Crear cliente</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       MODAL: CAMBIAR CONTRASEÑA (cliente)
+  ════════════════════════════════════════════════════ -->
+  <div id="modal-change-pass" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);align-items:center;justify-content:center">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px 28px 24px;width:min(380px,92vw);box-shadow:0 20px 60px rgba(0,0,0,.5)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px">🔑 Cambiar contraseña</div>
+        <button onclick="closeChangePassModal()" style="background:none;border:none;color:var(--muted2);font-size:18px;cursor:pointer;padding:2px 6px">✕</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:13px">
+        <div>
+          <label style="font-size:10px;color:var(--muted2);font-family:'Syne',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Nueva contraseña</label>
+          <input id="cp-new" type="password" placeholder="Mín. 6 caracteres" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:9px 12px;font-size:13px;outline:none;font-family:'JetBrains Mono',monospace">
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--muted2);font-family:'Syne',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Repetir contraseña</label>
+          <input id="cp-new2" type="password" placeholder="Repite la contraseña" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:9px 12px;font-size:13px;outline:none;font-family:'JetBrains Mono',monospace">
+        </div>
+        <div id="cp-error" style="display:none;background:rgba(239,83,80,.12);border:1px solid rgba(239,83,80,.3);border-radius:6px;padding:8px 11px;font-size:11px;color:#ef5350"></div>
+      </div>
+      <div style="display:flex;gap:9px;margin-top:20px">
+        <button class="btn ghost" style="flex:1;justify-content:center" onclick="closeChangePassModal()">Cancelar</button>
+        <button class="btn" style="flex:2;justify-content:center" id="cp-submit-btn" onclick="submitChangePass()">🔑 Cambiar contraseña</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-notas" class="panel">
+    <div id="notas-content"></div>
+  </div>
+
+  <!-- ══ MI PERFIL (includes Progreso) ══ -->
+  <div id="panel-perfil" class="panel">
+    <!-- Perfil completo del cliente (solo visible para coach cuando ve un cliente) -->
+    <div id="client-profile-card" style="display:none;margin-bottom:18px;max-width:1100px">
+      <div class="sec" style="margin-bottom:12px">👤 PERFIL DEL CLIENTE — <span id="client-profile-name" style="color:var(--accent2)">—</span></div>
+      <div style="display:grid;grid-template-columns:340px 1fr;gap:14px;align-items:start">
+        <!-- LEFT: datos del cliente -->
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:18px">
+            <div style="display:flex;align-items:center;gap:13px;margin-bottom:14px">
+              <div id="client-profile-avatar" style="width:64px;height:64px;border-radius:12px;background:var(--accent2);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:26px;color:#08090a;flex-shrink:0">?</div>
+              <div>
+                <div id="client-profile-fullname" style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px">—</div>
+                <div id="client-profile-email" style="font-size:11px;color:var(--muted2);margin-top:2px">—</div>
+              </div>
+            </div>
+            <div style="height:1px;background:var(--border);margin-bottom:12px"></div>
+            <div style="font-size:9px;color:var(--muted2);font-family:'Syne',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">📝 Notas del cliente</div>
+            <div id="client-personal-notes-view" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:9px;font-size:11px;color:var(--muted2);line-height:1.6;min-height:50px;white-space:pre-wrap">Sin notas.</div>
+            <div style="height:1px;background:var(--border);margin:12px 0"></div>
+            <div style="font-size:9px;color:var(--muted2);font-family:'Syne',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">📤 Feedback publicado</div>
+            <div id="client-coach-feedback-view" style="background:rgba(242,210,79,.04);border:1px solid rgba(242,210,79,.15);border-radius:6px;padding:9px;font-size:11px;color:var(--muted2);line-height:1.6;min-height:40px;white-space:pre-wrap">Sin feedback.</div>
+          </div>
+          <!-- Peso del cliente -->
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:18px">
+            <div class="sec" style="margin-bottom:10px">⚖️ PESO DEL CLIENTE</div>
+            <div id="client-weight-chart" style="display:flex;align-items:flex-end;gap:2px;height:70px;background:var(--bg2);border-radius:6px;padding:6px;overflow-x:auto;margin-bottom:8px">
+              <div style="color:var(--muted2);font-size:10px;text-align:center;width:100%;padding:6px">Sin registros</div>
+            </div>
+            <div id="client-weight-list" style="max-height:140px;overflow-y:auto;display:flex;flex-direction:column;gap:3px"></div>
+          </div>
+        </div>
+        <!-- RIGHT: progreso del cliente (usa los mismos charts) -->
+        <div>
+          <div class="sec" style="margin-bottom:12px">📈 PROGRESO Y MEDIDAS DEL CLIENTE</div>
+          <div class="prog-layout">
+            <div class="prog-stats-row" id="prg-stats-row" style="grid-column:1/-1">
+              <div class="prog-stat"><div class="ps-lbl">Peso actual</div><div class="ps-val" id="ps-weight">—</div><div class="ps-sub" id="ps-weight-sub">—</div></div>
+              <div class="prog-stat"><div class="ps-lbl">% Grasa</div><div class="ps-val" id="ps-fat">—</div><div class="ps-sub" id="ps-fat-sub">—</div></div>
+              <div class="prog-stat"><div class="ps-lbl">Cintura</div><div class="ps-val" id="ps-waist">—</div><div class="ps-sub" id="ps-waist-sub">—</div></div>
+              <div class="prog-stat"><div class="ps-lbl">Registros</div><div class="ps-val" id="ps-count">0</div><div class="ps-sub" id="ps-count-sub">—</div></div>
+            </div>
+            <div class="analysis-card" id="prg-analysis" style="display:none;grid-column:1/-1">
+              <h4>🔬 Análisis de composición corporal</h4>
+              <div class="analysis-status" id="prg-analysis-status"></div>
+              <div class="analysis-bars" id="prg-analysis-bars"></div>
+            </div>
+            <div class="chart-wrap" style="grid-column:1/-1">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:7px">
+                <div class="chart-tabs" id="chart-tabs">
+                  <button class="chart-tab active" onclick="switchChartTab('weight',this)">Peso</button>
+                  <button class="chart-tab" onclick="switchChartTab('fat',this)">% Grasa</button>
+                  <button class="chart-tab" onclick="switchChartTab('waist',this)">Cintura</button>
+                  <button class="chart-tab" onclick="switchChartTab('measures',this)">Medidas</button>
+                </div>
+              </div>
+              <div id="prg-chart-area" style="min-height:160px;display:flex;align-items:center;justify-content:center;color:var(--muted2);font-family:'Syne',sans-serif;font-size:12px">
+                Añade registros para ver la gráfica
+              </div>
+            </div>
+            <div style="grid-column:1/-1">
+              <div class="sec">Historial de registros</div>
+              <div class="table-scroll">
+                <table class="hist-table">
+                  <thead><tr><th>Fecha</th><th>Peso</th><th>Δ Peso</th><th>% Grasa</th><th>Cintura</th><th>Pecho</th><th>Brazo</th><th>Muslo</th><th>Notas</th></tr></thead>
+                  <tbody id="prg-history-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:340px 1fr;gap:14px;align-items:start;max-width:1100px">
+
+      <!-- LEFT: avatar + account settings -->
+      <div style="display:flex;flex-direction:column;gap:11px">
+
+        <!-- Avatar card -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:18px">
+          <div class="sec" style="margin-bottom:12px">👤 MI CUENTA</div>
+          <div style="display:flex;align-items:center;gap:13px;margin-bottom:14px">
+            <div id="profile-avatar-wrap" onclick="document.getElementById('avatar-file').click()"
+              style="width:64px;height:64px;border-radius:12px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:26px;color:#08090a;flex-shrink:0;cursor:pointer;overflow:hidden;position:relative">
+              <span id="profile-avatar-initials">?</span>
+              <img id="profile-avatar-img" src="" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+              <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);font-size:8px;text-align:center;padding:2px;color:#fff;font-family:'Syne',sans-serif;font-weight:700">FOTO</div>
+            </div>
+            <input type="file" id="avatar-file" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:9px;color:var(--muted2);font-family:'Syne',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Nombre</div>
+              <input id="profile-name-inp" type="text" placeholder="Tu nombre..."
+                style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;box-sizing:border-box">
+            </div>
+          </div>
+          <button class="btn" onclick="saveProfileName()" style="width:100%;justify-content:center;margin-bottom:12px">💾 Guardar nombre</button>
+
+          <div style="height:1px;background:var(--border);margin-bottom:12px"></div>
+
+          <div style="font-size:9px;color:var(--muted2);font-family:'Syne',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Cambiar contraseña</div>
+          <input id="profile-newpass" type="password" placeholder="Nueva contraseña (mín. 8 caracteres)"
+            style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;box-sizing:border-box;margin-bottom:8px">
+          <button class="btn ghost" onclick="changePassword()" style="width:100%;justify-content:center">🔑 Cambiar contraseña</button>
+
+          <div style="height:1px;background:var(--border);margin:12px 0"></div>
+          <button class="btn danger" onclick="deleteAccount()" style="width:100%;justify-content:center">🗑 Eliminar mi cuenta</button>
+        </div>
+
+        <!-- Weight quick log card -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:18px">
+          <div class="sec" style="margin-bottom:10px">⚖️ PESO RÁPIDO</div>
+          <div style="display:flex;gap:7px;align-items:center;margin-bottom:10px">
+            <input id="weight-inp" type="number" min="30" max="300" step="0.1" placeholder="kg"
+              style="width:75px;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:15px;outline:none;text-align:center"
+              onkeydown="if(event.key==='Enter')logWeight()">
+            <span style="color:var(--muted2);font-size:12px">kg</span>
+            <button class="btn sm" onclick="logWeight()" style="flex:1">+ Registrar</button>
+          </div>
+          <div id="weight-chart" style="display:flex;align-items:flex-end;gap:2px;height:70px;background:var(--bg2);border-radius:6px;padding:6px;overflow-x:auto;margin-bottom:8px"></div>
+          <div id="weight-list" style="max-height:140px;overflow-y:auto;display:flex;flex-direction:column;gap:3px"></div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Progreso completo -->
+      <div>
+        <div class="sec" style="margin-bottom:12px">📈 PROGRESO Y MEDIDAS</div>
+        <div class="prog-layout">
+          <div class="prog-form-card">
+            <div class="prog-form-head"><span>➕ Nuevo registro</span></div>
+            <div class="prog-form-body">
+              <div class="prog-field">
+                <label>Fecha</label>
+                <input class="prog-input" type="date" id="prg-date">
+              </div>
+              <div class="prog-section-lbl">⚖️ Peso corporal</div>
+              <div class="meds-grid">
+                <div class="med-field"><label>Peso (kg)</label><input class="med-inp" type="number" id="prg-weight" placeholder="75.5" min="30" max="300" step="0.1"></div>
+                <div class="med-field"><label>% Grasa</label><input class="med-inp" type="number" id="prg-fat" placeholder="18.0" min="3" max="60" step="0.1"></div>
+              </div>
+              <div class="prog-section-lbl">📏 Medidas (cm)</div>
+              <div class="meds-grid">
+                <div class="med-field"><label>Pecho</label><input class="med-inp" type="number" id="prg-chest" placeholder="—" step="0.5"></div>
+                <div class="med-field"><label>Cintura</label><input class="med-inp" type="number" id="prg-waist" placeholder="—" step="0.5"></div>
+                <div class="med-field"><label>Cadera</label><input class="med-inp" type="number" id="prg-hips" placeholder="—" step="0.5"></div>
+                <div class="med-field"><label>Brazo (der.)</label><input class="med-inp" type="number" id="prg-arm" placeholder="—" step="0.5"></div>
+                <div class="med-field"><label>Muslo (der.)</label><input class="med-inp" type="number" id="prg-thigh" placeholder="—" step="0.5"></div>
+                <div class="med-field"><label>Pantorrilla</label><input class="med-inp" type="number" id="prg-calf" placeholder="—" step="0.5"></div>
+                <div class="med-field"><label>Cuello</label><input class="med-inp" type="number" id="prg-neck" placeholder="—" step="0.5"></div>
+                <div class="med-field"><label>Hombros</label><input class="med-inp" type="number" id="prg-shoulder" placeholder="—" step="0.5"></div>
+              </div>
+              <div class="prog-field">
+                <label>Notas</label>
+                <textarea class="prog-input" id="prg-notes" placeholder="Ej: Empecé nueva dieta..." style="min-height:55px;resize:vertical;line-height:1.6"></textarea>
+              </div>
+              <button class="btn" style="width:100%;justify-content:center" onclick="saveProgressEntry()">💾 Guardar registro</button>
+            </div>
+          </div>
+          <div>
+            <div class="prog-stats-row" id="prg-stats-row">
+              <div class="prog-stat"><div class="ps-lbl">Peso actual</div><div class="ps-val" id="ps-weight">—</div><div class="ps-sub" id="ps-weight-sub">—</div></div>
+              <div class="prog-stat"><div class="ps-lbl">% Grasa</div><div class="ps-val" id="ps-fat">—</div><div class="ps-sub" id="ps-fat-sub">—</div></div>
+              <div class="prog-stat"><div class="ps-lbl">Cintura</div><div class="ps-val" id="ps-waist">—</div><div class="ps-sub" id="ps-waist-sub">—</div></div>
+              <div class="prog-stat"><div class="ps-lbl">Registros</div><div class="ps-val" id="ps-count">0</div><div class="ps-sub" id="ps-count-sub">—</div></div>
+            </div>
+            <div class="analysis-card" id="prg-analysis" style="display:none">
+              <h4>🔬 Análisis de composición corporal</h4>
+              <div class="analysis-status" id="prg-analysis-status"></div>
+              <div class="analysis-bars" id="prg-analysis-bars"></div>
+            </div>
+            <div class="chart-wrap">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:7px">
+                <div class="chart-tabs" id="chart-tabs">
+                  <button class="chart-tab active" onclick="switchChartTab('weight',this)">Peso</button>
+                  <button class="chart-tab" onclick="switchChartTab('fat',this)">% Grasa</button>
+                  <button class="chart-tab" onclick="switchChartTab('waist',this)">Cintura</button>
+                  <button class="chart-tab" onclick="switchChartTab('measures',this)">Medidas</button>
+                </div>
+              </div>
+              <div id="prg-chart-area" style="min-height:160px;display:flex;align-items:center;justify-content:center;color:var(--muted2);font-family:'Syne',sans-serif;font-size:12px">
+                Añade registros para ver la gráfica
+              </div>
+            </div>
+            <div class="sec">Historial de registros</div>
+            <div class="table-scroll">
+              <table class="hist-table">
+                <thead><tr><th>Fecha</th><th>Peso</th><th>Δ Peso</th><th>% Grasa</th><th>Cintura</th><th>Pecho</th><th>Brazo</th><th>Muslo</th><th>Notas</th><th></th></tr></thead>
+                <tbody id="prg-history-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AJUSTES (coach only) -->
+  <div id="panel-ajustes" class="panel">
+    <div style="max-width:680px;display:flex;flex-direction:column;gap:14px">
+
+      <!-- SQL Chat migration card -->
+      <div style="background:var(--card);border:1px solid rgba(79,242,194,.25);border-radius:11px;overflow:hidden">
+        <div style="padding:12px 16px;background:rgba(79,242,194,.06);border-bottom:1px solid rgba(79,242,194,.15);display:flex;align-items:center;gap:8px">
+          <span style="font-size:16px">🗄</span>
+          <div style="flex:1">
+            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:13px">SQL — Tabla de Chat</div>
+            <div style="font-size:10px;color:var(--muted2)">Ejecuta esto una vez en Supabase → SQL Editor para activar el chat.</div>
+          </div>
+          <button class="btn ghost sm" onclick="navigator.clipboard.writeText(document.getElementById('chat-sql').textContent).then(()=>toast('SQL copiado ✓'))">📋 Copiar</button>
+        </div>
+        <pre id="chat-sql" style="margin:0;padding:14px 16px;font-size:10px;color:var(--accent2);font-family:'JetBrains Mono',monospace;overflow-x:auto;line-height:1.7;background:transparent;white-space:pre">create table if not exists public.client_messages (
+  id bigint generated always as identity primary key,
+  client_id uuid not null references auth.users(id) on delete cascade,
+  coach_id  uuid not null references auth.users(id) on delete cascade,
+  sender_id uuid not null references auth.users(id) on delete cascade,
+  sender_role text not null check (sender_role in ('coach','client')),
+  message text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.client_messages enable row level security;
+
+-- Coach puede leer/escribir todos los mensajes de sus clientes
+create policy "coach_rw" on public.client_messages
+  for all using (coach_id = auth.uid());
+
+-- Cliente solo ve sus propios mensajes
+create policy "client_rw" on public.client_messages
+  for all using (client_id = auth.uid());</pre>
+      </div>
+
+      <!-- API Keys card -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;overflow:hidden">
+        <div style="padding:12px 16px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
+          <span style="font-size:16px">🔑</span>
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:13px">API Keys</div>
+            <div style="font-size:10px;color:var(--muted2)">Se guardan cifradas en Supabase. Solo el entrenador puede verlas.</div>
+          </div>
+        </div>
+          <div style="padding:16px;display:flex;flex-direction:column;gap:16px">
+
+          <!-- Claude / Anthropic API Key -->
+          <div>
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
+              <span style="font-size:14px">🤖</span>
+              <div style="flex:1">
+                <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:12px">Claude API Key (Anthropic)</div>
+                <div style="font-size:10px;color:var(--muted2)">Para actualizar precios con IA. <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--accent2);text-decoration:none">console.anthropic.com → API Keys</a></div>
+              </div>
+              <div id="claude-key-status" style="font-size:10px;font-family:'Syne',sans-serif;font-weight:700;color:var(--muted2);white-space:nowrap">—</div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center">
+              <input id="inp-claude-key" type="password" placeholder="sk-ant-api03-..." autocomplete="new-password"
+                style="flex:1;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;transition:border-color .15s"
+                onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+              <button class="btn ghost sm" onclick="toggleKeyVisibility('inp-claude-key')" title="Mostrar/ocultar" style="flex-shrink:0">👁</button>
+              <button class="btn sm" onclick="saveApiKey('anthropic_key','inp-claude-key','claude-key-status')" style="flex-shrink:0">💾 Guardar</button>
+            </div>
+            <div style="margin-top:5px;display:flex;gap:5px;align-items:center">
+              <button class="btn ghost sm" onclick="editApiKey('inp-claude-key','anthropic_key')" id="btn-edit-claude" style="display:none;font-size:10px">✏ Modificar clave actual</button>
+              <button class="btn danger sm" onclick="deleteApiKey('anthropic_key','claude-key-status','btn-edit-claude','inp-claude-key')" id="btn-del-claude" style="display:none;font-size:10px">🗑 Borrar</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Gestión de clientes card -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;overflow:hidden">
+        <div style="padding:12px 16px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
+          <span style="font-size:16px">👥</span>
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:13px">Gestión de clientes</div>
+            <div style="font-size:10px;color:var(--muted2)">Crea cuentas para tus clientes.</div>
+          </div>
+        </div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div>
+              <div style="font-size:10px;color:var(--muted2);margin-bottom:4px;font-family:'Syne',sans-serif;font-weight:700">Nombre completo</div>
+              <input id="new-client-name" type="text" placeholder="Ana García"
+                style="width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;outline:none">
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--muted2);margin-bottom:4px;font-family:'Syne',sans-serif;font-weight:700">Email</div>
+              <input id="new-client-email" type="email" placeholder="ana@email.com"
+                style="width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;outline:none">
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div>
+              <div style="font-size:10px;color:var(--muted2);margin-bottom:4px;font-family:'Syne',sans-serif;font-weight:700">Contraseña temporal</div>
+              <input id="new-client-pass" type="text" placeholder="Mín. 8 caracteres"
+                style="width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;outline:none">
+            </div>
+            <div style="display:flex;align-items:flex-end">
+              <button class="btn" style="width:100%;justify-content:center" onclick="createClientAccount()">➕ Crear cliente</button>
+            </div>
+          </div>
+          <div id="create-client-log" style="font-size:11px;color:var(--muted2);font-family:'JetBrains Mono',monospace;min-height:18px"></div>
+        </div>
+      </div>
+
+      <!-- Precios IA card -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;overflow:hidden">
+        <div style="padding:12px 16px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
+          <span style="font-size:16px">💰</span>
+          <div style="flex:1">
+            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:13px">Actualización de precios con IA</div>
+            <div style="font-size:10px;color:var(--muted2)">Claude estima precios de todos los ingredientes. Se comparte con todos los clientes.</div>
+          </div>
+          <div id="price-update-status" style="font-size:10px;color:var(--muted2);font-family:'JetBrains Mono',monospace;text-align:right"></div>
+        </div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <button class="btn teal" onclick="runAiPriceUpdate()" id="btn-ai-prices" style="gap:6px">
+              🤖 Actualizar precios ahora
+            </button>
+            <button class="btn ghost sm" onclick="fetchMercadonaPrices()">🏪 Solo Mercadona</button>
+            <div id="ai-price-progress" style="font-size:10px;color:var(--muted2);font-family:'JetBrains Mono',monospace"></div>
+          </div>
+          <div id="ai-price-log" style="font-size:10px;color:var(--muted2);font-family:'JetBrains Mono',monospace;max-height:120px;overflow-y:auto;background:var(--card2);border-radius:5px;padding:7px;display:none"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ CHAT ══ -->
+  <div id="panel-chat" class="panel">
+    <div id="chat-wrap" style="display:flex;flex-direction:column;height:calc(100vh - 120px);max-width:700px">
+      <div class="sec" style="margin-bottom:12px;flex-shrink:0">💬 CHAT — <span id="chat-with-label" style="color:var(--accent2)">—</span></div>
+      <div id="chat-messages" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 0 12px;scroll-behavior:smooth"></div>
+      <div style="flex-shrink:0;display:flex;gap:8px;padding-top:10px;border-top:1px solid var(--border)">
+        <textarea id="chat-input" placeholder="Escribe un mensaje…" rows="2"
+          style="flex:1;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 12px;font-family:inherit;font-size:13px;resize:none;outline:none;line-height:1.5;transition:border-color .15s"
+          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage();}"></textarea>
+        <button class="btn" onclick="sendChatMessage()" style="align-self:flex-end;padding:10px 18px">📤 Enviar</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app-main -->
+
+
+
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// Diagnóstico — se puede borrar en producción
+window.addEventListener('error', function(e) {
+  console.error('[EFK ERROR]', e.filename?.split('/').pop(), 'line', e.lineno, ':', e.message);
+});
+if (!window.supabase || !window.supabase.createClient) {
+  console.error('[EFK] supabase global NOT found after CDN load — check CDN URL');
+} else {
+  console.log('[EFK] supabase OK');
+}
+</script>
+
+<!-- JS Modules — orden importa -->
+<script src="js/config.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/diet.js"></script>
+<script src="js/recipes.js"></script>
+<script src="js/nutrition.js"></script>
+<script src="js/stock.js"></script>
+<script src="js/training.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/notes.js"></script>
+<script src="js/prices.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/modals.js"></script>
+<script src="js/progress.js"></script>
+<script src="js/chat.js"></script>
+<script src="js/boot.js"></script>
+
+</body>
+</html>

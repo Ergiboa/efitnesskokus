@@ -16,6 +16,8 @@ TODO
 -Entrenador no tiene mi perfil
 -Actualizar la pantalla directamente al cargar el cliente
 -Mejorar como se ve el chat
+-Ejercicios y cardio por tiempo
+-Mirar hevy para cojer ideas
 -Que el cliente pueda meter su progreso
 -Chat que se manden las fotos
 -Mejorar seguridad
